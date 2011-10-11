@@ -1,0 +1,275 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="ReportWatchModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2005" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="ReportWatchModelStoreContainer">
+          <EntitySet Name="DayPriceSet" EntityType="ReportWatchModel.Store.DayPriceSet" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="ExceptionLogSet" EntityType="ReportWatchModel.Store.ExceptionLogSet" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="ReportSet" EntityType="ReportWatchModel.Store.ReportSet" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="SymbolSet" EntityType="ReportWatchModel.Store.SymbolSet" store:Type="Tables" Schema="dbo" />
+          <AssociationSet Name="FK_Day_Symbol" Association="ReportWatchModel.Store.FK_Day_Symbol">
+            <End Role="SymbolSet" EntitySet="SymbolSet" />
+            <End Role="DayPriceSet" EntitySet="DayPriceSet" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Report_Symbol" Association="ReportWatchModel.Store.FK_Report_Symbol">
+            <End Role="SymbolSet" EntitySet="SymbolSet" />
+            <End Role="ReportSet" EntitySet="ReportSet" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="DayPriceSet">
+          <Key>
+            <PropertyRef Name="DayPriceId" />
+          </Key>
+          <Property Name="DayPriceId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="SymbolName" Type="nvarchar" Nullable="false" MaxLength="10" />
+          <Property Name="DayPriceDate" Type="datetime" Nullable="false" />
+          <Property Name="DayPriceOpen" Type="decimal" Nullable="false" Precision="10" Scale="4" />
+          <Property Name="DayPriceHigh" Type="decimal" Nullable="false" Precision="10" Scale="4" />
+          <Property Name="DayPriceLow" Type="decimal" Nullable="false" Precision="10" Scale="4" />
+          <Property Name="DayPriceClose" Type="decimal" Nullable="false" Precision="10" Scale="4" />
+          <Property Name="DayPriceAdjustedClose" Type="decimal" Nullable="false" Precision="10" Scale="4" />
+          <Property Name="DayPriceVolume" Type="bigint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ExceptionLogSet">
+          <Key>
+            <PropertyRef Name="ExceptionLogId" />
+          </Key>
+          <Property Name="ExceptionLogId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ExceptionLogDate" Type="datetime" Nullable="false" />
+          <Property Name="ExceptionLogMessage" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="ExceptionLogStackTrace" Type="nvarchar(max)" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ReportSet">
+          <Key>
+            <PropertyRef Name="ReportId" />
+          </Key>
+          <Property Name="ReportId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="SymbolName" Type="nvarchar" Nullable="false" MaxLength="10" />
+          <Property Name="ReportDate" Type="datetime" Nullable="false" />
+          <Property Name="ReportActual" Type="decimal" Nullable="false" Precision="10" Scale="4" />
+          <Property Name="ReportExpected" Type="decimal" Nullable="false" Precision="10" Scale="4" />
+          <Property Name="ReportPreviousYear" Type="decimal" Nullable="false" Precision="10" Scale="4" />
+          <Property Name="ReportPriceHigh" Type="decimal" Nullable="false" Precision="10" Scale="4" />
+          <Property Name="ReportName" Type="nvarchar" Nullable="false" MaxLength="10" />
+          <Property Name="ReportTitle" Type="nvarchar" Nullable="false" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="SymbolSet">
+          <Key>
+            <PropertyRef Name="SymbolName" />
+          </Key>
+          <Property Name="SymbolName" Type="nvarchar" Nullable="false" MaxLength="10" />
+          <Property Name="IndexSymbolName" Type="nvarchar" Nullable="false" MaxLength="10" />
+          <Property Name="CompanyName" Type="nvarchar" Nullable="false" MaxLength="250" />
+          <Property Name="DateReport" Type="datetime" />
+        </EntityType>
+        <Association Name="FK_Day_Symbol">
+          <End Role="SymbolSet" Type="ReportWatchModel.Store.SymbolSet" Multiplicity="1" />
+          <End Role="DayPriceSet" Type="ReportWatchModel.Store.DayPriceSet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SymbolSet">
+              <PropertyRef Name="SymbolName" />
+            </Principal>
+            <Dependent Role="DayPriceSet">
+              <PropertyRef Name="SymbolName" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Report_Symbol">
+          <End Role="SymbolSet" Type="ReportWatchModel.Store.SymbolSet" Multiplicity="1" />
+          <End Role="ReportSet" Type="ReportWatchModel.Store.ReportSet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SymbolSet">
+              <PropertyRef Name="SymbolName" />
+            </Principal>
+            <Dependent Role="ReportSet">
+              <PropertyRef Name="SymbolName" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="ReportWatchModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="ReportWatchEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="DayPriceSet" EntityType="ReportWatchModel.DayPrice" />
+          <EntitySet Name="ReportSet" EntityType="ReportWatchModel.Report" />
+          <EntitySet Name="SymbolSet" EntityType="ReportWatchModel.Symbol" />
+          <AssociationSet Name="FK_Day_Symbol" Association="ReportWatchModel.FK_Day_Symbol">
+            <End Role="Symbol" EntitySet="SymbolSet" />
+            <End Role="Day" EntitySet="DayPriceSet" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Report_Symbol" Association="ReportWatchModel.FK_Report_Symbol">
+            <End Role="Symbol" EntitySet="SymbolSet" />
+            <End Role="Report" EntitySet="ReportSet" />
+          </AssociationSet>
+          <EntitySet Name="ExceptionLogSet" EntityType="ReportWatchModel.ExceptionLog" />
+        </EntityContainer>
+        <EntityType Name="DayPrice">
+          <Key>
+            <PropertyRef Name="DayPriceId" />
+          </Key>
+          <Property Type="Guid" Name="DayPriceId" Nullable="false" />
+          <Property Type="String" Name="SymbolName" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Type="DateTime" Name="DayPriceDate" Nullable="false" />
+          <Property Type="Decimal" Name="DayPriceOpen" Nullable="false" Precision="10" Scale="4" />
+          <Property Type="Decimal" Name="DayPriceHigh" Nullable="false" Precision="10" Scale="4" />
+          <Property Type="Decimal" Name="DayPriceLow" Nullable="false" Precision="10" Scale="4" />
+          <Property Type="Decimal" Name="DayPriceClose" Nullable="false" Precision="10" Scale="4" />
+          <Property Type="Decimal" Name="DayPriceAdjustedClose" Nullable="false" Precision="10" Scale="4" />
+          <NavigationProperty Name="Symbol" Relationship="ReportWatchModel.FK_Day_Symbol" FromRole="Day" ToRole="Symbol" />
+          <Property Type="Int64" Name="DayPriceVolume" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Report">
+          <Key>
+            <PropertyRef Name="ReportId" />
+          </Key>
+          <Property Type="Guid" Name="ReportId" Nullable="false" />
+          <Property Type="String" Name="SymbolName" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Type="DateTime" Name="ReportDate" Nullable="false" />
+          <Property Type="Decimal" Name="ReportActual" Nullable="false" Precision="10" Scale="4" />
+          <Property Type="Decimal" Name="ReportExpected" Nullable="false" Precision="10" Scale="4" />
+          <Property Type="Decimal" Name="ReportPreviousYear" Nullable="false" Precision="10" Scale="4" />
+          <NavigationProperty Name="Symbol" Relationship="ReportWatchModel.FK_Report_Symbol" FromRole="Report" ToRole="Symbol" />
+          <Property Type="Decimal" Name="ReportPriceHigh" Nullable="false" Precision="10" Scale="4" />
+          <Property Type="String" Name="ReportName" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="ReportTitle" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="Symbol">
+          <Key>
+            <PropertyRef Name="SymbolName" />
+          </Key>
+          <Property Type="String" Name="SymbolName" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="CompanyName" MaxLength="250" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="DaySet" Relationship="ReportWatchModel.FK_Day_Symbol" FromRole="Symbol" ToRole="Day" />
+          <NavigationProperty Name="ReportSet" Relationship="ReportWatchModel.FK_Report_Symbol" FromRole="Symbol" ToRole="Report" />
+          <Property Type="String" Name="IndexSymbolName" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Type="DateTime" Name="DateReport" />
+        </EntityType>
+        <Association Name="FK_Day_Symbol">
+          <End Type="ReportWatchModel.Symbol" Role="Symbol" Multiplicity="1" />
+          <End Type="ReportWatchModel.DayPrice" Role="Day" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Symbol">
+              <PropertyRef Name="SymbolName" />
+            </Principal>
+            <Dependent Role="Day">
+              <PropertyRef Name="SymbolName" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Report_Symbol">
+          <End Type="ReportWatchModel.Symbol" Role="Symbol" Multiplicity="1" />
+          <End Type="ReportWatchModel.Report" Role="Report" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Symbol">
+              <PropertyRef Name="SymbolName" />
+            </Principal>
+            <Dependent Role="Report">
+              <PropertyRef Name="SymbolName" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="ExceptionLog">
+          <Key>
+            <PropertyRef Name="ExceptionLogId" />
+          </Key>
+          <Property Type="Guid" Name="ExceptionLogId" Nullable="false" />
+          <Property Type="DateTime" Name="ExceptionLogDate" Nullable="false" />
+          <Property Type="String" Name="ExceptionLogMessage" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="ExceptionLogStackTrace" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="ReportWatchModelStoreContainer" CdmEntityContainer="ReportWatchEntities">
+    <EntitySetMapping Name="DayPriceSet">
+      <EntityTypeMapping TypeName="IsTypeOf(ReportWatchModel.DayPrice)">
+        <MappingFragment StoreEntitySet="DayPriceSet">
+          <ScalarProperty Name="DayPriceId" ColumnName="DayPriceId" />
+          <ScalarProperty Name="SymbolName" ColumnName="SymbolName" />
+          <ScalarProperty Name="DayPriceDate" ColumnName="DayPriceDate" />
+          <ScalarProperty Name="DayPriceOpen" ColumnName="DayPriceOpen" />
+          <ScalarProperty Name="DayPriceHigh" ColumnName="DayPriceHigh" />
+          <ScalarProperty Name="DayPriceLow" ColumnName="DayPriceLow" />
+          <ScalarProperty Name="DayPriceClose" ColumnName="DayPriceClose" />
+          <ScalarProperty Name="DayPriceAdjustedClose" ColumnName="DayPriceAdjustedClose" />
+          <ScalarProperty Name="DayPriceVolume" ColumnName="DayPriceVolume" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ReportSet">
+      <EntityTypeMapping TypeName="IsTypeOf(ReportWatchModel.Report)">
+        <MappingFragment StoreEntitySet="ReportSet">
+          <ScalarProperty Name="ReportTitle" ColumnName="ReportTitle" />
+                <ScalarProperty Name="ReportName" ColumnName="ReportName" />
+                <ScalarProperty Name="ReportPriceHigh" ColumnName="ReportPriceHigh" />
+                <ScalarProperty Name="ReportId" ColumnName="ReportId" />
+          <ScalarProperty Name="SymbolName" ColumnName="SymbolName" />
+          <ScalarProperty Name="ReportDate" ColumnName="ReportDate" />
+          <ScalarProperty Name="ReportActual" ColumnName="ReportActual" />
+          <ScalarProperty Name="ReportExpected" ColumnName="ReportExpected" />
+          <ScalarProperty Name="ReportPreviousYear" ColumnName="ReportPreviousYear" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="SymbolSet">
+      <EntityTypeMapping TypeName="IsTypeOf(ReportWatchModel.Symbol)">
+        <MappingFragment StoreEntitySet="SymbolSet">
+          <ScalarProperty Name="DateReport" ColumnName="DateReport" />
+                <ScalarProperty Name="IndexSymbolName" ColumnName="IndexSymbolName" />
+                <ScalarProperty Name="SymbolName" ColumnName="SymbolName" />
+          <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+          <EntitySetMapping Name="ExceptionLogSet">
+            <EntityTypeMapping TypeName="ReportWatchModel.ExceptionLog">
+              <MappingFragment StoreEntitySet="ExceptionLogSet">
+                <ScalarProperty Name="ExceptionLogStackTrace" ColumnName="ExceptionLogStackTrace" />
+                <ScalarProperty Name="ExceptionLogMessage" ColumnName="ExceptionLogMessage" />
+                <ScalarProperty Name="ExceptionLogDate" ColumnName="ExceptionLogDate" />
+                <ScalarProperty Name="ExceptionLogId" ColumnName="ExceptionLogId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping></edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams>
+      <Diagram Name="ReportWatchModel">
+        <EntityTypeShape EntityType="ReportWatchModel.DayPrice" Width="2.125" PointX="3" PointY="1.125" Height="2.9417936197916665" />
+        <EntityTypeShape EntityType="ReportWatchModel.Report" Width="2.125" PointX="3" PointY="4.625" Height="2.3648893229166656" />
+        <EntityTypeShape EntityType="ReportWatchModel.Symbol" Width="1.875" PointX="0.5" PointY="3.125" Height="1.9802864583333326" />
+        <AssociationConnector Association="ReportWatchModel.FK_Day_Symbol" >
+          <ConnectorPoint PointX="2.375" PointY="3.5958968098958333" />
+          <ConnectorPoint PointX="3" PointY="3.5958968098958333" />
+        </AssociationConnector>
+        <AssociationConnector Association="ReportWatchModel.FK_Report_Symbol" >
+          <ConnectorPoint PointX="2.375" PointY="4.8651432291666659" />
+          <ConnectorPoint PointX="3" PointY="4.8651432291666659" />
+        </AssociationConnector>
+        <EntityTypeShape EntityType="ReportWatchModel.ExceptionLog" Width="2.125" PointX="6.375" PointY="0.75" Height="1.7879850260416674" />
+      </Diagram>
+    </Diagrams>
+  </Designer>
+</edmx:Edmx>
