@@ -47,30 +47,38 @@ namespace ReportWatch.Library
                 _timer.Elapsed += new ElapsedEventHandler(TimerElapsed);
                 _timer.Start();
             }
-            catch
+            catch (Exception ex)
             {
-                throw;
+                LogOps.LogException(ex);
             }
         }
 
         void TimerElapsed(object sender, ElapsedEventArgs e)
         {
-            if (_ready)
+            try
             {
-                if (this.Count > 0)
+                if (_ready)
                 {
-                    _ready = false; // Wait until this one is complete before doing the next one
-                    SymbolDownloader downloader = this.Dequeue();
-                    downloader.OnLoadDataComplete += new SymbolDownloader.LoadDataCompleted(downloader_OnLoadDataComplete);
-                    downloader.OnError += new SymbolDownloader.Error(downloader_OnError);
-                    downloader.Download();
+                    if (this.Count > 0)
+                    {
+                        _ready = false; // Wait until this one is complete before doing the next one
+                        SymbolDownloader downloader = this.Dequeue();
+                        downloader.OnLoadDataComplete += new SymbolDownloader.LoadDataCompleted(downloader_OnLoadDataComplete);
+                        downloader.OnError += new SymbolDownloader.Error(downloader_OnError);
+                        downloader.Download();
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                LogOps.LogException(ex);
             }
         }
 
         void downloader_OnError(SymbolDownloader symbolDownloader, Exception ex)
         {
             symbolDownloader.Dispose();
+            LogOps.LogException(ex);
             _ready = true; // Skip it and move on
         }
 
