@@ -45,55 +45,66 @@ namespace ReportWatch.Library
 
         public void Download()
         {
-            if (OnStart != null)
+            try
             {
-                OnStart();
+                if (OnStart != null)
+                {
+                    OnStart();
+                }
+
+                // Scrape the Earnings Reports from earnings.com
+                String uriString = String.Format("http://www.earnings.com/company.asp?client=cb&ticker={0}", this.SymbolName);
+
+                Uri uri = new Uri(uriString);
+                _webClient.DownloadStringAsync(uri);
             }
-
-            // Scrape the Earnings Reports from earnings.com
-            String uriString = String.Format("http://www.earnings.com/company.asp?client=cb&ticker={0}", this.SymbolName);
-
-            Uri uri = new Uri(uriString);
-            _webClient.DownloadStringAsync(uri);
+            catch (Exception ex)
+            {
+                if (OnError != null) { OnError(this, ex); }
+            }
         }
 
         private void WebClientDownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
         {
-            if (e.Error == null)
+            try
             {
-                string s = e.Result.ToString();
-                List<Report> reportList = new List<Report>();
-
-                Regex re = new Regex(Pattern, RegexOptions.Multiline);
-                MatchCollection mc = re.Matches(s);
+                if (e.Error == null)
                 {
-                    foreach (Match m in mc)
+                    string s = e.Result.ToString();
+                    List<Report> reportList = new List<Report>();
+
+                    Regex re = new Regex(Pattern, RegexOptions.Multiline);
+                    MatchCollection mc = re.Matches(s);
                     {
-                        Report report = new Report();
-                        report.ReportId = Guid.NewGuid();
-                        report.SymbolName = this.SymbolName;
-                        report.ReportName = m.Groups["Quarter"].Value.ToString() + " " + m.Groups["Year"].Value.ToString();
-                        report.ReportTitle = m.Groups["Title"].Value.ToString();
-                        report.ReportDate = DateTime.Parse(m.Groups["Date"].Value.ToString());
-                        if (m.Groups["Time"].Value.ToString().Contains("AMC")) report.ReportDate = report.ReportDate.AddDays(1);
-                        report.ReportExpected = Conversion.StringToDecimal(m.Groups["Estimate"].Value.ToString());
-                        report.ReportActual = Conversion.StringToDecimal(m.Groups["Actual"].Value.ToString());
-                        report.ReportPreviousYear = Conversion.StringToDecimal(m.Groups["Previous"].Value.ToString());
-                        reportList.Add(report);
+                        foreach (Match m in mc)
+                        {
+                            Report report = new Report();
+                            report.ReportId = Guid.NewGuid();
+                            report.SymbolName = this.SymbolName;
+                            report.ReportName = m.Groups["Quarter"].Value.ToString() + " " + m.Groups["Year"].Value.ToString();
+                            report.ReportTitle = m.Groups["Title"].Value.ToString();
+                            report.ReportDate = DateTime.Parse(m.Groups["Date"].Value.ToString());
+                            if (m.Groups["Time"].Value.ToString().Contains("AMC")) report.ReportDate = report.ReportDate.AddDays(1);
+                            report.ReportExpected = Conversion.StringToDecimal(m.Groups["Estimate"].Value.ToString());
+                            report.ReportActual = Conversion.StringToDecimal(m.Groups["Actual"].Value.ToString());
+                            report.ReportPreviousYear = Conversion.StringToDecimal(m.Groups["Previous"].Value.ToString());
+                            reportList.Add(report);
+                        }
+                    }
+
+                    if (OnLoadDataComplete != null)
+                    {
+                        OnLoadDataComplete(this, reportList);
                     }
                 }
-
-                if (OnLoadDataComplete != null)
+                else
                 {
-                    OnLoadDataComplete(this, reportList);
+                    if (OnError != null) { OnError(this, e.Error); }
                 }
             }
-            else
+            catch (Exception ex)
             {
-                if (OnError != null)
-                {
-                    OnError(this, e.Error);
-                }
+                if (OnError != null) { OnError(this, ex); }
             }
         }
 

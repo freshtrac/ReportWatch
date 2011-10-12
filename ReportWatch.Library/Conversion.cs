@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace ReportWatch.Library
 {
@@ -13,6 +14,7 @@ namespace ReportWatch.Library
 
             decimal d = 0.0M;
 
+            s = Regex.Replace(s, "[^-+0123456789.eE]", "");
             if (s != null && s.Length > 0)
             {
                 try
@@ -32,6 +34,7 @@ namespace ReportWatch.Library
 
             Int16 i = 0;
 
+            s = Regex.Replace(s, "[^-+0123456789.]", "");
             if (s != null && s.Length > 0)
             {
                 try
@@ -51,6 +54,7 @@ namespace ReportWatch.Library
 
             int i = 0;
 
+            s = Regex.Replace(s, "[^-+0123456789.]", "");
             if (s != null && s.Length > 0)
             {
                 try
@@ -70,6 +74,7 @@ namespace ReportWatch.Library
 
             Int64 i = 0;
 
+            s = Regex.Replace(s, "[^-+0123456789.]", "");
             if (s != null && s.Length > 0)
             {
                 try

@@ -45,52 +45,63 @@ namespace ReportWatch.Library
 
         public void Download()
         {
-            if (OnStart != null)
+            try
             {
-                OnStart();
+                if (OnStart != null)
+                {
+                    OnStart();
+                }
+
+                // Get the earnings Symbol from Yahoo Finance.
+                String uriString = String.Format("http://biz.yahoo.com/research/earncal/{0:0000}{1:00}{2:00}.html",
+                                                    ReportDate.Year,
+                                                    ReportDate.Month,
+                                                    ReportDate.Day);
+
+                Uri uri = new Uri(uriString);
+                _webClient.DownloadStringAsync(uri);
             }
-
-            // Get the earnings Symbol from Yahoo Finance.
-            String uriString = String.Format("http://biz.yahoo.com/research/earncal/{0:0000}{1:00}{2:00}.html",
-                                                ReportDate.Year,
-                                                ReportDate.Month,
-                                                ReportDate.Day);
-
-            Uri uri = new Uri(uriString);
-            _webClient.DownloadStringAsync(uri);
+            catch (Exception ex)
+            {
+                if (OnError != null) { OnError(this, ex); }
+            }
         }
 
         private void WebClientDownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
         {
-            if (e.Error == null)
+            try
             {
-                string s = e.Result.ToString();
-                List<Symbol> symbolList = new List<Symbol>();
-
-                Regex re = new Regex(Pattern, RegexOptions.Multiline);
-                MatchCollection mc = re.Matches(s);
+                if (e.Error == null)
                 {
-                    foreach (Match m in mc)
+                    string s = e.Result.ToString();
+                    List<Symbol> symbolList = new List<Symbol>();
+
+                    Regex re = new Regex(Pattern, RegexOptions.Multiline);
+                    MatchCollection mc = re.Matches(s);
                     {
-                        Symbol symbol = new Symbol();
-                        symbol.CompanyName = m.Groups["Company"].Value.ToString();
-                        symbol.SymbolName = m.Groups["Ticker2"].Value.ToString();
-                        symbol.DateReport = ReportDate;
-                        symbolList.Add(symbol);
+                        foreach (Match m in mc)
+                        {
+                            Symbol symbol = new Symbol();
+                            symbol.CompanyName = m.Groups["Company"].Value.ToString();
+                            symbol.SymbolName = m.Groups["Ticker2"].Value.ToString();
+                            symbol.DateReport = ReportDate;
+                            symbolList.Add(symbol);
+                        }
+                    }
+
+                    if (OnLoadDataComplete != null)
+                    {
+                        OnLoadDataComplete(this, symbolList);
                     }
                 }
-
-                if (OnLoadDataComplete != null)
+                else
                 {
-                    OnLoadDataComplete(this, symbolList);
+                    if (OnError != null) { OnError(this, e.Error); }
                 }
             }
-            else
+            catch (Exception ex)
             {
-                if (OnError != null)
-                {
-                    OnError(this, e.Error);
-                }
+                if (OnError != null) { OnError(this, ex); }
             }
         }
 

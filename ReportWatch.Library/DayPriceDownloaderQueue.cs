@@ -7,26 +7,26 @@ using ReportWatch.Database;
 
 namespace ReportWatch.Library
 {
-    public class ReportDownloaderQueue : Queue<ReportDownloader>
+    public class DayPriceDownloaderQueue : Queue<DayPriceDownloader>
     {
 
         #region Constructor (Singleton)
 
-        private static ReportDownloaderQueue _instance;
+        private static DayPriceDownloaderQueue _instance;
         System.Timers.Timer _timer = null;
         private int _milliseconds = 1000;
         private bool _ready = true;
 
-        protected ReportDownloaderQueue()
+        protected DayPriceDownloaderQueue()
         {
             StartPolling();
         }
 
-        public static ReportDownloaderQueue Instance(int milliseconds)
+        public static DayPriceDownloaderQueue Instance(int milliseconds)
         {
             if (_instance == null)
             {
-                _instance = new ReportDownloaderQueue();
+                _instance = new DayPriceDownloaderQueue();
             }
 
             _instance._milliseconds = milliseconds;
@@ -62,9 +62,9 @@ namespace ReportWatch.Library
                     if (this.Count > 0)
                     {
                         _ready = false; // Wait until this one is complete before doing the next one
-                        ReportDownloader downloader = this.Dequeue();
-                        downloader.OnLoadDataComplete += new ReportDownloader.LoadDataCompleted(downloader_OnLoadDataComplete);
-                        downloader.OnError += new ReportDownloader.Error(downloader_OnError);
+                        DayPriceDownloader downloader = this.Dequeue();
+                        downloader.OnLoadDataComplete += new DayPriceDownloader.LoadDataCompleted(downloader_OnLoadDataComplete);
+                        downloader.OnError += new DayPriceDownloader.Error(downloader_OnError);
                         downloader.Download();
                     }
                 }
@@ -75,14 +75,14 @@ namespace ReportWatch.Library
             }
         }
 
-        void downloader_OnError(ReportDownloader ReportDownloader, Exception ex)
+        void downloader_OnError(DayPriceDownloader DayPriceDownloader, Exception ex)
         {
-            ReportDownloader.Dispose();
+            DayPriceDownloader.Dispose();
             LogOps.LogException(ex);
             _ready = true; // Skip it and move on
         }
 
-        void downloader_OnLoadDataComplete(ReportDownloader ReportDownloader, List<Report> ReportList)
+        void downloader_OnLoadDataComplete(DayPriceDownloader DayPriceDownloader, List<DayPrice> DayPriceList)
         {
             _ready = true; // Ready to process another one
         }

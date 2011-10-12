@@ -54,7 +54,7 @@
           <Property Name="ReportPreviousYear" Type="decimal" Nullable="false" Precision="10" Scale="4" />
           <Property Name="ReportPriceHigh" Type="decimal" Nullable="false" Precision="10" Scale="4" />
           <Property Name="ReportName" Type="nvarchar" Nullable="false" MaxLength="10" />
-          <Property Name="ReportTitle" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="ReportTitle" Type="nvarchar" Nullable="false" MaxLength="100" />
         </EntityType>
         <EntityType Name="SymbolSet">
           <Key>
@@ -135,7 +135,7 @@
           <NavigationProperty Name="Symbol" Relationship="ReportWatchModel.FK_Report_Symbol" FromRole="Report" ToRole="Symbol" />
           <Property Type="Decimal" Name="ReportPriceHigh" Nullable="false" Precision="10" Scale="4" />
           <Property Type="String" Name="ReportName" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
-          <Property Type="String" Name="ReportTitle" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="ReportTitle" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Symbol">
           <Key>
