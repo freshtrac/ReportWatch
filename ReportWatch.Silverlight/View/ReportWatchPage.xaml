@@ -1,0 +1,143 @@
+﻿<UserControl x:Class="ReportWatch.Silverlight.ReportWatchPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+    xmlns:vc="clr-namespace:Visifire.Charts;assembly=SLVisifire.Charts"
+    xmlns:toolkit="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Toolkit"
+    xmlns:local="clr-namespace:ReportWatch.Silverlight">
+    <UserControl.Resources>
+        <Style x:Key="ToolTipStyle" TargetType="vc:ToolTip">
+            <Setter Property="IsHitTestVisible" Value="False"/>
+            <Setter Property="Visibility" Value="Collapsed"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="CornerRadius" Value="4,4,4,4"/>
+            <Setter Property="BorderThickness" Value="0.25,0.25,0.25,1"/>
+            <Setter Property="BorderBrush" Value="#FF000000"/>
+            <Setter Property="Padding" Value="10,5,10,3"/>
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush Opacity="0.9" EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FFC8C8C4" Offset="0.156"/>
+                        <GradientStop Color="#F0FFFFFF" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="FontFamily" Value="Portable User Interface"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontColor" Value="#FF2E2D2D"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="vc:ToolTip" >
+                        <Border  Name="ToolTipBorder" Opacity="{TemplateBinding Opacity}" IsHitTestVisible="false"  Visibility="{TemplateBinding Visibility}" CornerRadius="{TemplateBinding CornerRadius}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"  Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}">
+                            <Border.Child>
+                                <StackPanel >
+                                    <TextBlock Name="ToolTipTextBlock"  LineHeight="{TemplateBinding FontSize}" LineStackingStrategy="BlockLineHeight" TextWrapping="Wrap" Text="{Binding LabelText}" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}" Foreground="{TemplateBinding FontColor}" FontWeight="{TemplateBinding FontWeight}" FontStyle="{TemplateBinding FontStyle}"/>
+                                </StackPanel>
+                            </Border.Child>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="3*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Row="0" Grid.Column="0" Background="#7FD9E3F0">
+            <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Horizontal">
+                    <Button Name="MovePrevious" Command="{Binding MovePrevious}" Width="50" Height="30">&lt;</Button>
+                    <TextBlock Name="SelectedDateDisplay" Text="{Binding SelectedDate, StringFormat=MM/dd}" Width="100" HorizontalAlignment="Center" FontSize="20"></TextBlock>
+                    <Button Name="MoveNext" Command="{Binding MoveNext}" Width="50" Height="30">&gt;</Button>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <ItemsControl Name="SymbolCollectionUserControl" Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Path=SymbolCollection}" Background="BlanchedAlmond">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <toolkit:WrapPanel Orientation="Vertical"  HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <RadioButton Content="{Binding Path=SymbolName}" Click="RadioButton_Click" CommandParameter="{Binding Path=SymbolName}" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <toolkit:BusyIndicator Grid.Row="1" Grid.ColumnSpan="2" IsBusy="{Binding PriceHistoryChartIsBusy}">
+        <vc:Chart Name="ReportWatchChart" Theme="Theme2" BorderBrush="Gray" BorderThickness="0.5" ScrollingEnabled="True" AnimatedUpdate="true" ZoomingEnabled="True">
+            <vc:Chart.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="White" Offset="0.5"/>
+                    <GradientStop Color="#FFF9F9F9" Offset="1"/>
+                    <GradientStop Color="#FFCCCCCC" Offset="0.519"/>
+                    <GradientStop Color="#FFE7E7E7"/>
+                </LinearGradientBrush>
+            </vc:Chart.Background>
+
+            <vc:Chart.Titles>
+                <vc:Title Text="{Binding Path=CompanyName}" Padding="4"/>
+            </vc:Chart.Titles>
+
+            <vc:Chart.PlotArea>
+                <vc:PlotArea Background="#FFF7F7F7" />
+            </vc:Chart.PlotArea>
+
+            <vc:Chart.AxesX>
+                <vc:Axis ValueFormatString="yyyy-MM-dd" AxisMinimum="{Binding MinimumDateTime}" AxisMaximum="{Binding MaximumDateTime}">
+                    <vc:Axis.AxisLabels>
+                        <vc:AxisLabels Angle="-90"/>
+                    </vc:Axis.AxisLabels>
+                </vc:Axis>
+            </vc:Chart.AxesX>
+
+            <vc:Chart.AxesY>
+                <vc:Axis Title="Price" AxisType="Primary" AxisMinimum="{Binding MinimumDayPrice}" AxisMaximum="{Binding MaximumDayPrice}"/>
+                <vc:Axis Title="Volume" AxisType="Secondary"  AxisMinimum="{Binding MinimumVolume}" AxisMaximum="{Binding MaximumVolume}" Enabled="False" />
+            </vc:Chart.AxesY>
+
+            <vc:Chart.ToolTips>
+                <vc:ToolTip Style="{StaticResource ToolTipStyle}" ></vc:ToolTip>
+            </vc:Chart.ToolTips>
+
+            <vc:Chart.Series>
+                <vc:DataSeries RenderAs="CandleStick"  LegendText="Price History" XValueType="DateTime"  DataSource="{Binding DayPriceCollection}" XValueFormatString="yyyy-MM-dd" AxisYType="Primary">
+                    <vc:DataSeries.DataMappings>
+                        <vc:DataMapping MemberName="XValue" Path="DayPriceDate"/>
+                        <vc:DataMapping MemberName="YValues" Path="Candlestick"/>
+                    </vc:DataSeries.DataMappings>
+                </vc:DataSeries>
+                
+                <vc:DataSeries RenderAs="Column"  LegendText="Volume" XValueType="DateTime"  DataSource="{Binding DayPriceCollection}" XValueFormatString="yyyy-MM-dd" AxisYType="Secondary">
+                    <vc:DataSeries.DataMappings>
+                        <vc:DataMapping MemberName="XValue" Path="DayPriceDate"/>
+                        <vc:DataMapping MemberName="YValue" Path="DayPriceVolume"/>
+                    </vc:DataSeries.DataMappings>
+                </vc:DataSeries>
+
+                <vc:DataSeries RenderAs="Point"  LegendText="Earnings Report" XValueType="DateTime" LightingEnabled="false" ShadowEnabled="true" DataSource="{Binding ReportCollection}" XValueFormatString="yyyy-MM-dd HH:mm" AxisYType="Primary" MarkerSize="30" MarkerEnabled="True" MarkerType="Triangle">
+                    <vc:DataSeries.DataMappings>
+                        <vc:DataMapping MemberName="ToolTipText" Path="ReportTitle"/>
+                        <vc:DataMapping MemberName="XValue" Path="ReportDate"/>
+                        <vc:DataMapping MemberName="YValue" Path="DayPriceHigh"/>
+                    </vc:DataSeries.DataMappings>
+                </vc:DataSeries>
+
+            </vc:Chart.Series>
+        </vc:Chart>
+        </toolkit:BusyIndicator>
+    </Grid>
+</UserControl>

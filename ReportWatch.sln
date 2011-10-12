@@ -14,6 +14,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReportWatch.Library", "ReportWatch.Library\ReportWatch.Library.csproj", "{5DC05089-42E3-46CE-AF7C-BB794EDB7BF0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReportWatch.Service", "ReportWatch.Service\ReportWatch.Service.csproj", "{7644763F-DFA3-450E-9139-5CB3CEA7D0C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReportWatch.Silverlight.Data", "ReportWatch.Silverlight.Data\ReportWatch.Silverlight.Data.csproj", "{19CC352E-555C-4697-A734-7A3525012E83}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7644763F-DFA3-450E-9139-5CB3CEA7D0C4} = {7644763F-DFA3-450E-9139-5CB3CEA7D0C4}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReportWatch.Silverlight", "ReportWatch.Silverlight\ReportWatch.Silverlight.csproj", "{30A64D37-F223-4CCE-9679-073A541E66DE}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = ReportWatch.vsmdi
@@ -35,6 +44,18 @@ Global
 		{5DC05089-42E3-46CE-AF7C-BB794EDB7BF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5DC05089-42E3-46CE-AF7C-BB794EDB7BF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5DC05089-42E3-46CE-AF7C-BB794EDB7BF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7644763F-DFA3-450E-9139-5CB3CEA7D0C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7644763F-DFA3-450E-9139-5CB3CEA7D0C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7644763F-DFA3-450E-9139-5CB3CEA7D0C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7644763F-DFA3-450E-9139-5CB3CEA7D0C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19CC352E-555C-4697-A734-7A3525012E83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19CC352E-555C-4697-A734-7A3525012E83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19CC352E-555C-4697-A734-7A3525012E83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19CC352E-555C-4697-A734-7A3525012E83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30A64D37-F223-4CCE-9679-073A541E66DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30A64D37-F223-4CCE-9679-073A541E66DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30A64D37-F223-4CCE-9679-073A541E66DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30A64D37-F223-4CCE-9679-073A541E66DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

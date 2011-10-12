@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<publishData>
+  <publishProfile publishUrl="C:\Users\Keith\Documents\Visual Studio 2010\Projects\ReportWatch\Publish" deleteExistingFiles="True" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FileSystem" replaceMatchingFiles="False" userName="" savePWD="False" userPWD="" SelectedForPublish="True">
+    <file relUrl="Silverlight.js" publishTime="07/15/2011 20:48:39" />
+    <file relUrl="bin/ReportWatch.Service.dll" publishTime="07/20/2011 12:00:30" />
+    <file relUrl="ReportWatch.aspx" publishTime="07/15/2011 20:48:39" />
+    <file relUrl="ReportWatchService.svc" publishTime="07/15/2011 20:59:12" />
+    <file relUrl="Web.config" publishTime="07/20/2011 11:59:55" />
+    <file relUrl="bin/ReportWatch.Database.pdb" publishTime="07/19/2011 08:58:01" />
+    <file relUrl="ClientAccessPolicy.xml" publishTime="07/15/2011 23:12:10" />
+    <file relUrl="ReportWatch.html" publishTime="07/15/2011 20:48:39" />
+    <file relUrl="ClientBin/ReportWatch.Silverlight.xap" publishTime="07/20/2011 12:00:33" />
+    <file relUrl="bin/ReportWatch.Service.pdb" publishTime="07/20/2011 12:00:30" />
+    <file relUrl="bin/ReportWatch.Database.dll" publishTime="07/19/2011 08:58:02" />
+  </publishProfile>
+</publishData>
