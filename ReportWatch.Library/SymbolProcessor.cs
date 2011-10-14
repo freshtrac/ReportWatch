@@ -25,7 +25,7 @@ namespace ReportWatch.Library
         {
             try
             {
-                SymbolDownloader symbolDownloader = new SymbolDownloader(DateTime.Parse("2011-10-11"));
+                SymbolDownloader symbolDownloader = new SymbolDownloader(_reportDate);
                 symbolDownloader.OnLoadDataComplete += new SymbolDownloader.LoadDataCompleted(symbolDownloader_OnLoadDataComplete);
                 SymbolDownloaderQueue symbolDownloaderQueue = SymbolDownloaderQueue.Instance(1000);
                 symbolDownloaderQueue.Enqueue(symbolDownloader);
@@ -48,7 +48,7 @@ namespace ReportWatch.Library
                 // Set the next report date
                 foreach (Symbol symbol in symbolEnumerable)
                 {
-                    symbol.DateReport = _reportDate;
+                    symbol.ReportDate = _reportDate;
                 }
 
                 _entities.SaveChanges();
@@ -61,8 +61,14 @@ namespace ReportWatch.Library
                 {
                     ReportDownloader reportDownloader = new ReportDownloader(symbol.SymbolName);
                     reportDownloader.OnLoadDataComplete += new ReportDownloader.LoadDataCompleted(reportDownloader_OnLoadDataComplete);
-                    ReportDownloaderQueue reportDownloaderQueue = ReportDownloaderQueue.Instance(4000);
+                    ReportDownloaderQueue reportDownloaderQueue = ReportDownloaderQueue.Instance(5000);
                     reportDownloaderQueue.Enqueue(reportDownloader);
+                }
+
+                if (symbolEnumerable.Count() == 0)
+                {
+                    if (OnCompleted != null) OnCompleted();
+                    this.Dispose();
                 }
             }
             catch (Exception ex)
@@ -114,7 +120,7 @@ namespace ReportWatch.Library
                 {
                     if (!dayPriceDateList.Contains(dayPrice.DayPriceDate))
                     {
-                        System.Threading.Thread.Sleep(5); // Don't go too fast, or GUIDs are not unique.
+                        System.Threading.Thread.Sleep(10); // Don't go too fast, or GUIDs are not unique.
                         _entities.DayPriceSet.AddObject(dayPrice);
                     }
                 }

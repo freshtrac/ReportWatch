@@ -105,33 +105,33 @@ namespace ReportWatch.Library
                 if (e.Error == null)
                 {
                     string s = e.Result.ToString();
-                    List<DayPrice> DayPriceList = new List<DayPrice>();
+                    List<DayPrice> dayPriceList = new List<DayPrice>();
 
                     Regex re = new Regex(Pattern, RegexOptions.Multiline);
                     MatchCollection mc = re.Matches(s);
                     {
                         foreach (Match m in mc)
                         {
-                            DayPrice DayPrice = new DayPrice();
-                            DayPrice.DayPriceId = Guid.NewGuid();
-                            DayPrice.SymbolName = this.SymbolName;
+                            DayPrice dayPrice = new DayPrice();
+                            dayPrice.DayPriceId = Guid.NewGuid();
+                            dayPrice.SymbolName = this.SymbolName;
                             int year = Conversion.StringToInt32(m.Groups["Year"].Value.ToString());
                             int month = Conversion.StringToInt32(m.Groups["Month"].Value.ToString());
                             int day = Conversion.StringToInt32(m.Groups["Day"].Value.ToString());
-                            DayPrice.DayPriceDate = new DateTime(year, month, day);
-                            DayPrice.DayPriceOpen = Conversion.StringToDecimal(m.Groups["Open"].Value.ToString());
-                            DayPrice.DayPriceHigh = Conversion.StringToDecimal(m.Groups["High"].Value.ToString());
-                            DayPrice.DayPriceLow = Conversion.StringToDecimal(m.Groups["Low"].Value.ToString());
-                            DayPrice.DayPriceClose = Conversion.StringToDecimal(m.Groups["Close"].Value.ToString());
-                            DayPrice.DayPriceVolume = Conversion.StringToInt64(m.Groups["Volume"].Value.ToString());
-                            DayPrice.DayPriceAdjustedClose = Conversion.StringToDecimal(m.Groups["AdjClose"].Value.ToString());
-                            DayPriceList.Add(DayPrice);
+                            dayPrice.DayPriceDate = new DateTime(year, month, day);
+                            dayPrice.DayPriceOpen = Conversion.StringToDecimal(m.Groups["Open"].Value.ToString());
+                            dayPrice.DayPriceHigh = Conversion.StringToDecimal(m.Groups["High"].Value.ToString());
+                            dayPrice.DayPriceLow = Conversion.StringToDecimal(m.Groups["Low"].Value.ToString());
+                            dayPrice.DayPriceClose = Conversion.StringToDecimal(m.Groups["Close"].Value.ToString());
+                            dayPrice.DayPriceVolume = Conversion.StringToInt64(m.Groups["Volume"].Value.ToString());
+                            dayPrice.DayPriceAdjustedClose = Conversion.StringToDecimal(m.Groups["AdjClose"].Value.ToString());
+                            dayPriceList.Add(dayPrice);
                         }
                     }
 
                     if (OnLoadDataComplete != null)
                     {
-                        OnLoadDataComplete(this, DayPriceList);
+                        OnLoadDataComplete(this, dayPriceList);
                     }
                 }
                 else

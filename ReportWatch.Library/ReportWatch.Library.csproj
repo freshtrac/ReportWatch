@@ -53,13 +53,13 @@
     <Compile Include="SymbolProcessor.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\ReportWatch.Database\ReportWatch.Database.csproj">
       <Project>{0C1DEA85-B444-4D3D-A7DD-B4A16512DDEE}</Project>
       <Name>ReportWatch.Database</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

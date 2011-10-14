@@ -12,7 +12,7 @@ namespace ReportWatch.Database
             get
             {
                 // Place the marker on the chart just above the price display
-                return (double)this.ReportPriceHigh + 1.0; 
+                return (double)this.DayPriceHigh + 1.0; 
             }
         }
 
@@ -21,6 +21,8 @@ namespace ReportWatch.Database
             get
             {
                 StringBuilder sb = new StringBuilder();
+                sb.AppendLine(ReportTitle.ToString());
+                sb.Append("Date: ");
                 sb.AppendLine(ReportDate.ToString("MM/dd/yyyy"));
                 sb.Append("Surprise: ");
                 sb.AppendLine((ReportActual - ReportExpected).ToString("N2"));

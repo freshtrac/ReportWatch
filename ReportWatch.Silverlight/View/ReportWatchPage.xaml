@@ -58,13 +58,13 @@
             <StackPanel Orientation="Vertical">
                 <StackPanel Orientation="Horizontal">
                     <Button Name="MovePrevious" Command="{Binding MovePrevious}" Width="50" Height="30">&lt;</Button>
-                    <TextBlock Name="SelectedDateDisplay" Text="{Binding SelectedDate, StringFormat=MM/dd}" Width="100" HorizontalAlignment="Center" FontSize="20"></TextBlock>
+                    <TextBlock Name="SelectedDateDisplay" Text="{Binding SelectedDate, StringFormat=MM/dd}" Width="60" HorizontalAlignment="Center" FontSize="20" Margin="20,0,20,0"></TextBlock>
                     <Button Name="MoveNext" Command="{Binding MoveNext}" Width="50" Height="30">&gt;</Button>
                 </StackPanel>
             </StackPanel>
         </Border>
 
-        <ItemsControl Name="SymbolCollectionUserControl" Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Path=SymbolCollection}" Background="BlanchedAlmond">
+        <ItemsControl Name="SymbolCollectionUserControl" Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Path=SymbolCollection}" Background="BlanchedAlmond" Margin="10">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <toolkit:WrapPanel Orientation="Vertical"  HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"/>
@@ -78,66 +78,66 @@
         </ItemsControl>
 
         <toolkit:BusyIndicator Grid.Row="1" Grid.ColumnSpan="2" IsBusy="{Binding PriceHistoryChartIsBusy}">
-        <vc:Chart Name="ReportWatchChart" Theme="Theme2" BorderBrush="Gray" BorderThickness="0.5" ScrollingEnabled="True" AnimatedUpdate="true" ZoomingEnabled="True">
-            <vc:Chart.Background>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="White" Offset="0.5"/>
-                    <GradientStop Color="#FFF9F9F9" Offset="1"/>
-                    <GradientStop Color="#FFCCCCCC" Offset="0.519"/>
-                    <GradientStop Color="#FFE7E7E7"/>
-                </LinearGradientBrush>
-            </vc:Chart.Background>
+            <vc:Chart Name="ReportWatchChart" Theme="Theme2" BorderBrush="Gray" BorderThickness="0.5" ScrollingEnabled="True" AnimatedUpdate="true" ZoomingEnabled="True">
+                <vc:Chart.Background>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="White" Offset="0.5"/>
+                        <GradientStop Color="#FFF9F9F9" Offset="1"/>
+                        <GradientStop Color="#FFCCCCCC" Offset="0.519"/>
+                        <GradientStop Color="#FFE7E7E7"/>
+                    </LinearGradientBrush>
+                </vc:Chart.Background>
 
-            <vc:Chart.Titles>
-                <vc:Title Text="{Binding Path=CompanyName}" Padding="4"/>
-            </vc:Chart.Titles>
+                <vc:Chart.Titles>
+                    <vc:Title Text="{Binding Path=CompanyName}" Padding="4"/>
+                </vc:Chart.Titles>
 
-            <vc:Chart.PlotArea>
-                <vc:PlotArea Background="#FFF7F7F7" />
-            </vc:Chart.PlotArea>
+                <vc:Chart.PlotArea>
+                    <vc:PlotArea Background="#FFF7F7F7" />
+                </vc:Chart.PlotArea>
 
-            <vc:Chart.AxesX>
-                <vc:Axis ValueFormatString="yyyy-MM-dd" AxisMinimum="{Binding MinimumDateTime}" AxisMaximum="{Binding MaximumDateTime}">
-                    <vc:Axis.AxisLabels>
-                        <vc:AxisLabels Angle="-90"/>
-                    </vc:Axis.AxisLabels>
-                </vc:Axis>
-            </vc:Chart.AxesX>
+                <vc:Chart.AxesX>
+                    <vc:Axis ValueFormatString="yyyy-MM-dd" AxisMinimum="{Binding MinimumDateTime}" AxisMaximum="{Binding MaximumDateTime}">
+                        <vc:Axis.AxisLabels>
+                            <vc:AxisLabels Angle="-90"/>
+                        </vc:Axis.AxisLabels>
+                    </vc:Axis>
+                </vc:Chart.AxesX>
 
-            <vc:Chart.AxesY>
-                <vc:Axis Title="Price" AxisType="Primary" AxisMinimum="{Binding MinimumDayPrice}" AxisMaximum="{Binding MaximumDayPrice}"/>
-                <vc:Axis Title="Volume" AxisType="Secondary"  AxisMinimum="{Binding MinimumVolume}" AxisMaximum="{Binding MaximumVolume}" Enabled="False" />
-            </vc:Chart.AxesY>
+                <vc:Chart.AxesY>
+                    <vc:Axis Title="Price" AxisType="Primary" AxisMinimum="{Binding MinimumDayPrice}" AxisMaximum="{Binding MaximumDayPrice}"/>
+                    <vc:Axis Title="Volume" AxisType="Secondary"  AxisMinimum="{Binding MinimumVolume}" AxisMaximum="{Binding MaximumVolume}" Enabled="False" />
+                </vc:Chart.AxesY>
 
-            <vc:Chart.ToolTips>
-                <vc:ToolTip Style="{StaticResource ToolTipStyle}" ></vc:ToolTip>
-            </vc:Chart.ToolTips>
+                <vc:Chart.ToolTips>
+                    <vc:ToolTip Style="{StaticResource ToolTipStyle}" ></vc:ToolTip>
+                </vc:Chart.ToolTips>
 
-            <vc:Chart.Series>
-                <vc:DataSeries RenderAs="CandleStick"  LegendText="Price History" XValueType="DateTime"  DataSource="{Binding DayPriceCollection}" XValueFormatString="yyyy-MM-dd" AxisYType="Primary">
-                    <vc:DataSeries.DataMappings>
-                        <vc:DataMapping MemberName="XValue" Path="DayPriceDate"/>
-                        <vc:DataMapping MemberName="YValues" Path="Candlestick"/>
-                    </vc:DataSeries.DataMappings>
-                </vc:DataSeries>
-                
-                <vc:DataSeries RenderAs="Column"  LegendText="Volume" XValueType="DateTime"  DataSource="{Binding DayPriceCollection}" XValueFormatString="yyyy-MM-dd" AxisYType="Secondary">
-                    <vc:DataSeries.DataMappings>
-                        <vc:DataMapping MemberName="XValue" Path="DayPriceDate"/>
-                        <vc:DataMapping MemberName="YValue" Path="DayPriceVolume"/>
-                    </vc:DataSeries.DataMappings>
-                </vc:DataSeries>
+                <vc:Chart.Series>
+                    <vc:DataSeries RenderAs="CandleStick"  LegendText="Price History" XValueType="DateTime"  DataSource="{Binding DayPriceCollection}" XValueFormatString="yyyy-MM-dd" AxisYType="Primary">
+                        <vc:DataSeries.DataMappings>
+                            <vc:DataMapping MemberName="XValue" Path="DayPriceDate"/>
+                            <vc:DataMapping MemberName="YValues" Path="Candlestick"/>
+                        </vc:DataSeries.DataMappings>
+                    </vc:DataSeries>
 
-                <vc:DataSeries RenderAs="Point"  LegendText="Earnings Report" XValueType="DateTime" LightingEnabled="false" ShadowEnabled="true" DataSource="{Binding ReportCollection}" XValueFormatString="yyyy-MM-dd HH:mm" AxisYType="Primary" MarkerSize="30" MarkerEnabled="True" MarkerType="Triangle">
-                    <vc:DataSeries.DataMappings>
-                        <vc:DataMapping MemberName="ToolTipText" Path="ReportTitle"/>
-                        <vc:DataMapping MemberName="XValue" Path="ReportDate"/>
-                        <vc:DataMapping MemberName="YValue" Path="DayPriceHigh"/>
-                    </vc:DataSeries.DataMappings>
-                </vc:DataSeries>
+                    <vc:DataSeries RenderAs="Column" LegendText="Volume" XValueType="DateTime"  DataSource="{Binding DayPriceCollection}" XValueFormatString="yyyy-MM-dd" AxisYType="Secondary" Color="Blue" Opacity="0.5">
+                        <vc:DataSeries.DataMappings>
+                            <vc:DataMapping MemberName="XValue" Path="DayPriceDate"/>
+                            <vc:DataMapping MemberName="YValue" Path="DayPriceVolume"/>
+                        </vc:DataSeries.DataMappings>
+                    </vc:DataSeries>
 
-            </vc:Chart.Series>
-        </vc:Chart>
+                    <vc:DataSeries RenderAs="Point"  LegendText="Earnings Report" XValueType="DateTime" LightingEnabled="false" ShadowEnabled="true" DataSource="{Binding ReportCollection}" XValueFormatString="yyyy-MM-dd HH:mm" AxisYType="Primary" MarkerSize="16" MarkerEnabled="True" MarkerType="Triangle" Color="Purple">
+                        <vc:DataSeries.DataMappings>
+                            <vc:DataMapping MemberName="XValue" Path="ReportDate"/>
+                            <vc:DataMapping MemberName="YValue" Path="ReportPriceHigh"/>
+                            <vc:DataMapping MemberName="ToolTipText" Path="ToolTipText"/>
+                        </vc:DataSeries.DataMappings>
+                    </vc:DataSeries>
+
+                </vc:Chart.Series>
+            </vc:Chart>
         </toolkit:BusyIndicator>
     </Grid>
 </UserControl>

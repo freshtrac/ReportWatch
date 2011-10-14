@@ -288,7 +288,7 @@ namespace ReportWatch.Silverlight
         {
             DataServiceQuery<Symbol> symbolQuery = (DataServiceQuery<Symbol>)
                 from symbol in this.context.CreateQuery<Symbol>("SymbolSet")
-                where symbol.DateReport == this.SelectedDate
+                where symbol.ReportDate == this.SelectedDate
                 select symbol;
             symbolQuery.BeginExecute(new AsyncCallback(this.SymbolRequestCompleted), symbolQuery);
         }

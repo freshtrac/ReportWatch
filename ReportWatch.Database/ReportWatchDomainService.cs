@@ -49,11 +49,15 @@ namespace ReportWatch.Database
 
         public void DeleteDayPrice(DayPrice dayPrice)
         {
-            if ((dayPrice.EntityState == EntityState.Detached))
+            if ((dayPrice.EntityState != EntityState.Detached))
+            {
+                this.ObjectContext.ObjectStateManager.ChangeObjectState(dayPrice, EntityState.Deleted);
+            }
+            else
             {
                 this.ObjectContext.DayPriceSet.Attach(dayPrice);
+                this.ObjectContext.DayPriceSet.DeleteObject(dayPrice);
             }
-            this.ObjectContext.DayPriceSet.DeleteObject(dayPrice);
         }
 
         // TODO:
@@ -84,11 +88,15 @@ namespace ReportWatch.Database
 
         public void DeleteExceptionLog(ExceptionLog exceptionLog)
         {
-            if ((exceptionLog.EntityState == EntityState.Detached))
+            if ((exceptionLog.EntityState != EntityState.Detached))
+            {
+                this.ObjectContext.ObjectStateManager.ChangeObjectState(exceptionLog, EntityState.Deleted);
+            }
+            else
             {
                 this.ObjectContext.ExceptionLogSet.Attach(exceptionLog);
+                this.ObjectContext.ExceptionLogSet.DeleteObject(exceptionLog);
             }
-            this.ObjectContext.ExceptionLogSet.DeleteObject(exceptionLog);
         }
 
         // TODO:
@@ -119,11 +127,15 @@ namespace ReportWatch.Database
 
         public void DeleteReport(Report report)
         {
-            if ((report.EntityState == EntityState.Detached))
+            if ((report.EntityState != EntityState.Detached))
+            {
+                this.ObjectContext.ObjectStateManager.ChangeObjectState(report, EntityState.Deleted);
+            }
+            else
             {
                 this.ObjectContext.ReportSet.Attach(report);
+                this.ObjectContext.ReportSet.DeleteObject(report);
             }
-            this.ObjectContext.ReportSet.DeleteObject(report);
         }
 
         // TODO:
@@ -154,11 +166,15 @@ namespace ReportWatch.Database
 
         public void DeleteSymbol(Symbol symbol)
         {
-            if ((symbol.EntityState == EntityState.Detached))
+            if ((symbol.EntityState != EntityState.Detached))
+            {
+                this.ObjectContext.ObjectStateManager.ChangeObjectState(symbol, EntityState.Deleted);
+            }
+            else
             {
                 this.ObjectContext.SymbolSet.Attach(symbol);
+                this.ObjectContext.SymbolSet.DeleteObject(symbol);
             }
-            this.ObjectContext.SymbolSet.DeleteObject(symbol);
         }
     }
 }

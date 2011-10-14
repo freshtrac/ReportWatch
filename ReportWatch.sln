@@ -19,6 +19,7 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReportWatch.Silverlight.Data", "ReportWatch.Silverlight.Data\ReportWatch.Silverlight.Data.csproj", "{19CC352E-555C-4697-A734-7A3525012E83}"
 	ProjectSection(ProjectDependencies) = postProject
 		{7644763F-DFA3-450E-9139-5CB3CEA7D0C4} = {7644763F-DFA3-450E-9139-5CB3CEA7D0C4}
+		{7644763F-DFA3-450E-9139-5CB3CEA7D0C4} = {7644763F-DFA3-450E-9139-5CB3CEA7D0C4}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReportWatch.Silverlight", "ReportWatch.Silverlight\ReportWatch.Silverlight.csproj", "{30A64D37-F223-4CCE-9679-073A541E66DE}"

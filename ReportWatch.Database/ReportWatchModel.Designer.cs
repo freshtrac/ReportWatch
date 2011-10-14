@@ -18,8 +18,8 @@ using System.Runtime.Serialization;
 [assembly: EdmSchemaAttribute()]
 #region EDM Relationship Metadata
 
-[assembly: EdmRelationshipAttribute("ReportWatchModel", "FK_Day_Symbol", "Symbol", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(ReportWatch.Database.Symbol), "Day", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ReportWatch.Database.DayPrice), true)]
-[assembly: EdmRelationshipAttribute("ReportWatchModel", "FK_Report_Symbol", "Symbol", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(ReportWatch.Database.Symbol), "Report", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ReportWatch.Database.Report), true)]
+[assembly: EdmRelationshipAttribute("ReportWatchModel", "FK_Day_Symbol", "SymbolSet", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(ReportWatch.Database.Symbol), "DayPriceSet", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ReportWatch.Database.DayPrice), true)]
+[assembly: EdmRelationshipAttribute("ReportWatchModel", "FK_Report_Symbol", "SymbolSet", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(ReportWatch.Database.Symbol), "ReportSet", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ReportWatch.Database.Report), true)]
 
 #endregion
 
@@ -90,6 +90,22 @@ namespace ReportWatch.Database
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
+        public ObjectSet<ExceptionLog> ExceptionLogSet
+        {
+            get
+            {
+                if ((_ExceptionLogSet == null))
+                {
+                    _ExceptionLogSet = base.CreateObjectSet<ExceptionLog>("ExceptionLogSet");
+                }
+                return _ExceptionLogSet;
+            }
+        }
+        private ObjectSet<ExceptionLog> _ExceptionLogSet;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
         public ObjectSet<Report> ReportSet
         {
             get
@@ -118,22 +134,6 @@ namespace ReportWatch.Database
             }
         }
         private ObjectSet<Symbol> _SymbolSet;
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        public ObjectSet<ExceptionLog> ExceptionLogSet
-        {
-            get
-            {
-                if ((_ExceptionLogSet == null))
-                {
-                    _ExceptionLogSet = base.CreateObjectSet<ExceptionLog>("ExceptionLogSet");
-                }
-                return _ExceptionLogSet;
-            }
-        }
-        private ObjectSet<ExceptionLog> _ExceptionLogSet;
 
         #endregion
         #region AddTo Methods
@@ -144,6 +144,14 @@ namespace ReportWatch.Database
         public void AddToDayPriceSet(DayPrice dayPrice)
         {
             base.AddObject("DayPriceSet", dayPrice);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the ExceptionLogSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToExceptionLogSet(ExceptionLog exceptionLog)
+        {
+            base.AddObject("ExceptionLogSet", exceptionLog);
         }
     
         /// <summary>
@@ -160,14 +168,6 @@ namespace ReportWatch.Database
         public void AddToSymbolSet(Symbol symbol)
         {
             base.AddObject("SymbolSet", symbol);
-        }
-    
-        /// <summary>
-        /// Deprecated Method for adding a new object to the ExceptionLogSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
-        /// </summary>
-        public void AddToExceptionLogSet(ExceptionLog exceptionLog)
-        {
-            base.AddObject("ExceptionLogSet", exceptionLog);
         }
 
         #endregion
@@ -248,7 +248,7 @@ namespace ReportWatch.Database
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
         [DataMemberAttribute()]
         public global::System.String SymbolName
         {
@@ -258,11 +258,14 @@ namespace ReportWatch.Database
             }
             set
             {
-                OnSymbolNameChanging(value);
-                ReportPropertyChanging("SymbolName");
-                _SymbolName = StructuralObject.SetValidValue(value, false);
-                ReportPropertyChanged("SymbolName");
-                OnSymbolNameChanged();
+                if (_SymbolName != value)
+                {
+                    OnSymbolNameChanging(value);
+                    ReportPropertyChanging("SymbolName");
+                    _SymbolName = StructuralObject.SetValidValue(value, false);
+                    ReportPropertyChanged("SymbolName");
+                    OnSymbolNameChanged();
+                }
             }
         }
         private global::System.String _SymbolName;
@@ -447,16 +450,16 @@ namespace ReportWatch.Database
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("ReportWatchModel", "FK_Day_Symbol", "Symbol")]
+        [EdmRelationshipNavigationPropertyAttribute("ReportWatchModel", "FK_Day_Symbol", "SymbolSet")]
         public Symbol Symbol
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Symbol>("ReportWatchModel.FK_Day_Symbol", "Symbol").Value;
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Symbol>("ReportWatchModel.FK_Day_Symbol", "SymbolSet").Value;
             }
             set
             {
-                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Symbol>("ReportWatchModel.FK_Day_Symbol", "Symbol").Value = value;
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Symbol>("ReportWatchModel.FK_Day_Symbol", "SymbolSet").Value = value;
             }
         }
         /// <summary>
@@ -468,13 +471,13 @@ namespace ReportWatch.Database
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Symbol>("ReportWatchModel.FK_Day_Symbol", "Symbol");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Symbol>("ReportWatchModel.FK_Day_Symbol", "SymbolSet");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Symbol>("ReportWatchModel.FK_Day_Symbol", "Symbol", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Symbol>("ReportWatchModel.FK_Day_Symbol", "SymbolSet", value);
                 }
             }
         }
@@ -634,10 +637,10 @@ namespace ReportWatch.Database
         /// <param name="reportActual">Initial value of the ReportActual property.</param>
         /// <param name="reportExpected">Initial value of the ReportExpected property.</param>
         /// <param name="reportPreviousYear">Initial value of the ReportPreviousYear property.</param>
-        /// <param name="reportPriceHigh">Initial value of the ReportPriceHigh property.</param>
+        /// <param name="dayPriceHigh">Initial value of the DayPriceHigh property.</param>
         /// <param name="reportName">Initial value of the ReportName property.</param>
         /// <param name="reportTitle">Initial value of the ReportTitle property.</param>
-        public static Report CreateReport(global::System.Guid reportId, global::System.String symbolName, global::System.DateTime reportDate, global::System.Decimal reportActual, global::System.Decimal reportExpected, global::System.Decimal reportPreviousYear, global::System.Decimal reportPriceHigh, global::System.String reportName, global::System.String reportTitle)
+        public static Report CreateReport(global::System.Guid reportId, global::System.String symbolName, global::System.DateTime reportDate, global::System.Decimal reportActual, global::System.Decimal reportExpected, global::System.Decimal reportPreviousYear, global::System.Decimal dayPriceHigh, global::System.String reportName, global::System.String reportTitle)
         {
             Report report = new Report();
             report.ReportId = reportId;
@@ -646,7 +649,7 @@ namespace ReportWatch.Database
             report.ReportActual = reportActual;
             report.ReportExpected = reportExpected;
             report.ReportPreviousYear = reportPreviousYear;
-            report.ReportPriceHigh = reportPriceHigh;
+            report.DayPriceHigh = dayPriceHigh;
             report.ReportName = reportName;
             report.ReportTitle = reportTitle;
             return report;
@@ -685,7 +688,7 @@ namespace ReportWatch.Database
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
         [DataMemberAttribute()]
         public global::System.String SymbolName
         {
@@ -695,11 +698,14 @@ namespace ReportWatch.Database
             }
             set
             {
-                OnSymbolNameChanging(value);
-                ReportPropertyChanging("SymbolName");
-                _SymbolName = StructuralObject.SetValidValue(value, false);
-                ReportPropertyChanged("SymbolName");
-                OnSymbolNameChanged();
+                if (_SymbolName != value)
+                {
+                    OnSymbolNameChanging(value);
+                    ReportPropertyChanging("SymbolName");
+                    _SymbolName = StructuralObject.SetValidValue(value, false);
+                    ReportPropertyChanged("SymbolName");
+                    OnSymbolNameChanged();
+                }
             }
         }
         private global::System.String _SymbolName;
@@ -807,24 +813,24 @@ namespace ReportWatch.Database
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
-        public global::System.Decimal ReportPriceHigh
+        public global::System.Decimal DayPriceHigh
         {
             get
             {
-                return _ReportPriceHigh;
+                return _DayPriceHigh;
             }
             set
             {
-                OnReportPriceHighChanging(value);
-                ReportPropertyChanging("ReportPriceHigh");
-                _ReportPriceHigh = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("ReportPriceHigh");
-                OnReportPriceHighChanged();
+                OnDayPriceHighChanging(value);
+                ReportPropertyChanging("DayPriceHigh");
+                _DayPriceHigh = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DayPriceHigh");
+                OnDayPriceHighChanged();
             }
         }
-        private global::System.Decimal _ReportPriceHigh;
-        partial void OnReportPriceHighChanging(global::System.Decimal value);
-        partial void OnReportPriceHighChanged();
+        private global::System.Decimal _DayPriceHigh;
+        partial void OnDayPriceHighChanging(global::System.Decimal value);
+        partial void OnDayPriceHighChanged();
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -884,16 +890,16 @@ namespace ReportWatch.Database
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("ReportWatchModel", "FK_Report_Symbol", "Symbol")]
+        [EdmRelationshipNavigationPropertyAttribute("ReportWatchModel", "FK_Report_Symbol", "SymbolSet")]
         public Symbol Symbol
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Symbol>("ReportWatchModel.FK_Report_Symbol", "Symbol").Value;
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Symbol>("ReportWatchModel.FK_Report_Symbol", "SymbolSet").Value;
             }
             set
             {
-                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Symbol>("ReportWatchModel.FK_Report_Symbol", "Symbol").Value = value;
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Symbol>("ReportWatchModel.FK_Report_Symbol", "SymbolSet").Value = value;
             }
         }
         /// <summary>
@@ -905,13 +911,13 @@ namespace ReportWatch.Database
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Symbol>("ReportWatchModel.FK_Report_Symbol", "Symbol");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Symbol>("ReportWatchModel.FK_Report_Symbol", "SymbolSet");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Symbol>("ReportWatchModel.FK_Report_Symbol", "Symbol", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Symbol>("ReportWatchModel.FK_Report_Symbol", "SymbolSet", value);
                 }
             }
         }
@@ -933,14 +939,14 @@ namespace ReportWatch.Database
         /// Create a new Symbol object.
         /// </summary>
         /// <param name="symbolName">Initial value of the SymbolName property.</param>
-        /// <param name="companyName">Initial value of the CompanyName property.</param>
         /// <param name="indexSymbolName">Initial value of the IndexSymbolName property.</param>
-        public static Symbol CreateSymbol(global::System.String symbolName, global::System.String companyName, global::System.String indexSymbolName)
+        /// <param name="companyName">Initial value of the CompanyName property.</param>
+        public static Symbol CreateSymbol(global::System.String symbolName, global::System.String indexSymbolName, global::System.String companyName)
         {
             Symbol symbol = new Symbol();
             symbol.SymbolName = symbolName;
-            symbol.CompanyName = companyName;
             symbol.IndexSymbolName = indexSymbolName;
+            symbol.CompanyName = companyName;
             return symbol;
         }
 
@@ -979,30 +985,6 @@ namespace ReportWatch.Database
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
-        public global::System.String CompanyName
-        {
-            get
-            {
-                return _CompanyName;
-            }
-            set
-            {
-                OnCompanyNameChanging(value);
-                ReportPropertyChanging("CompanyName");
-                _CompanyName = StructuralObject.SetValidValue(value, false);
-                ReportPropertyChanged("CompanyName");
-                OnCompanyNameChanged();
-            }
-        }
-        private global::System.String _CompanyName;
-        partial void OnCompanyNameChanging(global::System.String value);
-        partial void OnCompanyNameChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
         public global::System.String IndexSymbolName
         {
             get
@@ -1025,26 +1007,50 @@ namespace ReportWatch.Database
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
-        public Nullable<global::System.DateTime> DateReport
+        public global::System.String CompanyName
         {
             get
             {
-                return _DateReport;
+                return _CompanyName;
             }
             set
             {
-                OnDateReportChanging(value);
-                ReportPropertyChanging("DateReport");
-                _DateReport = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("DateReport");
-                OnDateReportChanged();
+                OnCompanyNameChanging(value);
+                ReportPropertyChanging("CompanyName");
+                _CompanyName = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("CompanyName");
+                OnCompanyNameChanged();
             }
         }
-        private Nullable<global::System.DateTime> _DateReport;
-        partial void OnDateReportChanging(Nullable<global::System.DateTime> value);
-        partial void OnDateReportChanged();
+        private global::System.String _CompanyName;
+        partial void OnCompanyNameChanging(global::System.String value);
+        partial void OnCompanyNameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public Nullable<global::System.DateTime> ReportDate
+        {
+            get
+            {
+                return _ReportDate;
+            }
+            set
+            {
+                OnReportDateChanging(value);
+                ReportPropertyChanging("ReportDate");
+                _ReportDate = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ReportDate");
+                OnReportDateChanged();
+            }
+        }
+        private Nullable<global::System.DateTime> _ReportDate;
+        partial void OnReportDateChanging(Nullable<global::System.DateTime> value);
+        partial void OnReportDateChanged();
 
         #endregion
     
@@ -1056,18 +1062,18 @@ namespace ReportWatch.Database
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("ReportWatchModel", "FK_Day_Symbol", "Day")]
-        public EntityCollection<DayPrice> DaySet
+        [EdmRelationshipNavigationPropertyAttribute("ReportWatchModel", "FK_Day_Symbol", "DayPriceSet")]
+        public EntityCollection<DayPrice> DayPriceSet
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<DayPrice>("ReportWatchModel.FK_Day_Symbol", "Day");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<DayPrice>("ReportWatchModel.FK_Day_Symbol", "DayPriceSet");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<DayPrice>("ReportWatchModel.FK_Day_Symbol", "Day", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<DayPrice>("ReportWatchModel.FK_Day_Symbol", "DayPriceSet", value);
                 }
             }
         }
@@ -1078,18 +1084,18 @@ namespace ReportWatch.Database
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("ReportWatchModel", "FK_Report_Symbol", "Report")]
+        [EdmRelationshipNavigationPropertyAttribute("ReportWatchModel", "FK_Report_Symbol", "ReportSet")]
         public EntityCollection<Report> ReportSet
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Report>("ReportWatchModel.FK_Report_Symbol", "Report");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Report>("ReportWatchModel.FK_Report_Symbol", "ReportSet");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Report>("ReportWatchModel.FK_Report_Symbol", "Report", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Report>("ReportWatchModel.FK_Report_Symbol", "ReportSet", value);
                 }
             }
         }

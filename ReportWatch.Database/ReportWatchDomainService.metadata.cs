@@ -118,6 +118,8 @@ namespace ReportWatch.Database
             {
             }
 
+            public decimal DayPriceHigh { get; set; }
+
             public decimal ReportActual { get; set; }
 
             public DateTime ReportDate { get; set; }
@@ -129,8 +131,6 @@ namespace ReportWatch.Database
             public string ReportName { get; set; }
 
             public decimal ReportPreviousYear { get; set; }
-
-            public decimal ReportPriceHigh { get; set; }
 
             public string ReportTitle { get; set; }
 
@@ -169,11 +169,11 @@ namespace ReportWatch.Database
 
             public string CompanyName { get; set; }
 
-            public Nullable<DateTime> DateReport { get; set; }
-
-            public EntityCollection<DayPrice> DaySet { get; set; }
+            public EntityCollection<DayPrice> DayPriceSet { get; set; }
 
             public string IndexSymbolName { get; set; }
+
+            public Nullable<DateTime> ReportDate { get; set; }
 
             public EntityCollection<Report> ReportSet { get; set; }
 

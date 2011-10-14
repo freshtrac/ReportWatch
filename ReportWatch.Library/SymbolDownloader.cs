@@ -11,7 +11,8 @@ namespace ReportWatch.Library
     public class SymbolDownloader : IDisposable
     {
         private WebClient _webClient;
-        private const string Pattern = @"<td>(?<Company>.+?)</td><td><a href=\""http://finance.yahoo.com/q\?s=(?<Ticker>[a-z0-9\.]+?)\"">(?<Ticker2>[A-Z0-9\.]+?)</a></td><td\s*align=\""*center\""*>(?<Eps>.+?)</td><td\s*align=\""*center\""*><small>(?<Time>.+?)</small></td>";
+        private const string Pattern1 = @"<td>(?<Company>.+?)</td><td><a href=\""http://finance.yahoo.com/q\?s=(?<Ticker>[a-z0-9\.]+?)\"">(?<Ticker2>[A-Z0-9\.]+?)</a></td><td\s*align=\""*center\""*>(?<Eps>.+?)</td><td\s*align=\""*center\""*><small>(?<Time>.+?)</small></td>";
+        private const string Pattern2 = @"<td>(?<Company>.+?)</td><td><a href=\""http://finance.yahoo.com/q\?s=(?<Ticker>[a-z0-9\.]+?)\"">(?<Ticker2>[A-Z0-9\.]+?)</a></td><td\s*align=\""*center\""*><small>(?<Time>.+?)</small></td></tr>";
 
         private DateTime _reportDate = new DateTime();
         public DateTime ReportDate
@@ -73,10 +74,19 @@ namespace ReportWatch.Library
             {
                 if (e.Error == null)
                 {
-                    string s = e.Result.ToString();
+                    string s = e.Result.ToString().Replace(Environment.NewLine,string.Empty);
                     List<Symbol> symbolList = new List<Symbol>();
 
-                    Regex re = new Regex(Pattern, RegexOptions.Multiline);
+                    Regex re = null;
+                    if (ReportDate >= DateTime.Today)
+                    {
+                        re = new Regex(Pattern1, RegexOptions.Multiline);
+                    }
+                    else
+                    {
+                        re = new Regex(Pattern2, RegexOptions.Multiline);
+                    }
+                    
                     MatchCollection mc = re.Matches(s);
                     {
                         foreach (Match m in mc)
@@ -84,7 +94,14 @@ namespace ReportWatch.Library
                             Symbol symbol = new Symbol();
                             symbol.CompanyName = m.Groups["Company"].Value.ToString();
                             symbol.SymbolName = m.Groups["Ticker2"].Value.ToString();
-                            symbol.DateReport = ReportDate;
+                            if (m.Groups["Time"].Value.ToString().Equals("After Market Close"))
+                            {
+                                symbol.ReportDate = ReportDate.AddDays(1);
+                            }
+                            else
+                            {
+                                symbol.ReportDate = ReportDate;
+                            }
                             symbolList.Add(symbol);
                         }
                     }
