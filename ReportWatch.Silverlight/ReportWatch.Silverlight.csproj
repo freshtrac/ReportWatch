@@ -81,6 +81,9 @@
     <Reference Include="Telerik.Windows.Controls.Input">
       <HintPath>..\..\Library\Telerik\Silverlight\Telerik.Windows.Controls.Input.dll</HintPath>
     </Reference>
+    <Reference Include="Telerik.Windows.Controls.Navigation">
+      <HintPath>..\..\Library\Telerik\Silverlight\Telerik.Windows.Controls.Navigation.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">

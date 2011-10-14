@@ -58,6 +58,8 @@ namespace ReportWatch.Database
 
             public string SymbolName { get; set; }
 
+            public double VolumeChange { get; set; }
+
             public string VolumeToolTipText { get; set; }
         }
     }
@@ -120,6 +122,8 @@ namespace ReportWatch.Database
 
             public decimal DayPriceHigh { get; set; }
 
+            public double PriceChange { get; set; }
+
             public decimal ReportActual { get; set; }
 
             public DateTime ReportDate { get; set; }
@@ -139,8 +143,6 @@ namespace ReportWatch.Database
             public string SymbolName { get; set; }
 
             public string ToolTipText { get; set; }
-
-            public double YValue { get; set; }
         }
     }
 

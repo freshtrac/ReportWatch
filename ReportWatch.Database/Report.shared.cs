@@ -7,14 +7,8 @@ namespace ReportWatch.Database
 {
     public partial class Report
     {
-        public double YValue
-        {
-            get
-            {
-                // Place the marker on the chart just above the price display
-                return (double)this.DayPriceHigh + 1.0; 
-            }
-        }
+
+        public double PriceChange { get; set; }
 
         public string ToolTipText
         {

@@ -30,36 +30,6 @@ namespace ReportWatch.Database
             return this.ObjectContext.DayPriceSet;
         }
 
-        public void InsertDayPrice(DayPrice dayPrice)
-        {
-            if ((dayPrice.EntityState != EntityState.Detached))
-            {
-                this.ObjectContext.ObjectStateManager.ChangeObjectState(dayPrice, EntityState.Added);
-            }
-            else
-            {
-                this.ObjectContext.DayPriceSet.AddObject(dayPrice);
-            }
-        }
-
-        public void UpdateDayPrice(DayPrice currentDayPrice)
-        {
-            this.ObjectContext.DayPriceSet.AttachAsModified(currentDayPrice, this.ChangeSet.GetOriginal(currentDayPrice));
-        }
-
-        public void DeleteDayPrice(DayPrice dayPrice)
-        {
-            if ((dayPrice.EntityState != EntityState.Detached))
-            {
-                this.ObjectContext.ObjectStateManager.ChangeObjectState(dayPrice, EntityState.Deleted);
-            }
-            else
-            {
-                this.ObjectContext.DayPriceSet.Attach(dayPrice);
-                this.ObjectContext.DayPriceSet.DeleteObject(dayPrice);
-            }
-        }
-
         // TODO:
         // Consider constraining the results of your query method.  If you need additional input you can
         // add parameters to this method or create additional query methods with different names.
@@ -108,36 +78,6 @@ namespace ReportWatch.Database
             return this.ObjectContext.ReportSet;
         }
 
-        public void InsertReport(Report report)
-        {
-            if ((report.EntityState != EntityState.Detached))
-            {
-                this.ObjectContext.ObjectStateManager.ChangeObjectState(report, EntityState.Added);
-            }
-            else
-            {
-                this.ObjectContext.ReportSet.AddObject(report);
-            }
-        }
-
-        public void UpdateReport(Report currentReport)
-        {
-            this.ObjectContext.ReportSet.AttachAsModified(currentReport, this.ChangeSet.GetOriginal(currentReport));
-        }
-
-        public void DeleteReport(Report report)
-        {
-            if ((report.EntityState != EntityState.Detached))
-            {
-                this.ObjectContext.ObjectStateManager.ChangeObjectState(report, EntityState.Deleted);
-            }
-            else
-            {
-                this.ObjectContext.ReportSet.Attach(report);
-                this.ObjectContext.ReportSet.DeleteObject(report);
-            }
-        }
-
         // TODO:
         // Consider constraining the results of your query method.  If you need additional input you can
         // add parameters to this method or create additional query methods with different names.
@@ -145,36 +85,6 @@ namespace ReportWatch.Database
         public IQueryable<Symbol> GetSymbolSet()
         {
             return this.ObjectContext.SymbolSet;
-        }
-
-        public void InsertSymbol(Symbol symbol)
-        {
-            if ((symbol.EntityState != EntityState.Detached))
-            {
-                this.ObjectContext.ObjectStateManager.ChangeObjectState(symbol, EntityState.Added);
-            }
-            else
-            {
-                this.ObjectContext.SymbolSet.AddObject(symbol);
-            }
-        }
-
-        public void UpdateSymbol(Symbol currentSymbol)
-        {
-            this.ObjectContext.SymbolSet.AttachAsModified(currentSymbol, this.ChangeSet.GetOriginal(currentSymbol));
-        }
-
-        public void DeleteSymbol(Symbol symbol)
-        {
-            if ((symbol.EntityState != EntityState.Detached))
-            {
-                this.ObjectContext.ObjectStateManager.ChangeObjectState(symbol, EntityState.Deleted);
-            }
-            else
-            {
-                this.ObjectContext.SymbolSet.Attach(symbol);
-                this.ObjectContext.SymbolSet.DeleteObject(symbol);
-            }
         }
     }
 }

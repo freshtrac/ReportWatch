@@ -1119,10 +1119,10 @@ namespace ReportWatch.Database
             
             public ReportWatchDomainContextEntityContainer()
             {
-                this.CreateEntitySet<DayPrice>(EntitySetOperations.All);
+                this.CreateEntitySet<DayPrice>(EntitySetOperations.None);
                 this.CreateEntitySet<ExceptionLog>(EntitySetOperations.All);
-                this.CreateEntitySet<Report>(EntitySetOperations.All);
-                this.CreateEntitySet<Symbol>(EntitySetOperations.All);
+                this.CreateEntitySet<Report>(EntitySetOperations.None);
+                this.CreateEntitySet<Symbol>(EntitySetOperations.None);
             }
         }
     }

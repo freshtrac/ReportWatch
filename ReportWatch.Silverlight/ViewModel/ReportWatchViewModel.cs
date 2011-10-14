@@ -199,6 +199,32 @@ namespace ReportWatch.Silverlight
             }
         }
 
+        public double MinimumDayChange
+        {
+            get
+            {
+                double num = 0.0;
+                if (this.DayChangeCollection.Count > 0)
+                {
+                    num = (double)(from d in this.DayChangeCollection.Cast<DayPrice>() select d.DayPriceClose).Min<decimal>();
+                }
+                return num;
+            }
+        }
+
+        public double MaximumDayChange
+        {
+            get
+            {
+                double num = 1.0;
+                if (this.DayChangeCollection.Count > 0)
+                {
+                    num = (double)(from d in this.DayChangeCollection.Cast<DayPrice>() select d.DayPriceClose).Max<decimal>();
+                }
+                return num;
+            }
+        }
+
         public bool PriceHistoryChartIsBusy
         {
             get
@@ -280,6 +306,22 @@ namespace ReportWatch.Silverlight
             }
         }
 
+        private ObservableCollection<DayPrice> _DayChangeCollection = new ObservableCollection<DayPrice>();
+        public ObservableCollection<DayPrice> DayChangeCollection
+        {
+            get
+            {
+                return this._DayChangeCollection;
+            }
+            set
+            {
+                this._DayChangeCollection = value;
+                base.NotifyPropertyChanged("DayChangeCollection");
+                base.NotifyPropertyChanged("MinimumDayChange");
+                base.NotifyPropertyChanged("MaximumDayChange");
+            }
+        }
+
         #endregion
 
         #region Data Retrieval
@@ -319,6 +361,33 @@ namespace ReportWatch.Silverlight
             DataServiceQuery<DayPrice> asyncState = asyncResult.AsyncState as DataServiceQuery<DayPrice>;
             DayPriceCollection = new ObservableCollection<DayPrice>(asyncState.EndExecute(asyncResult).ToList<DayPrice>());
             DayPriceQueryIsBusy = false;
+            CalculateDayPriceChange();
+        }
+
+        private void CalculateDayPriceChange()
+        {
+            List<DayPrice> dayChangeCollection = new List<DayPrice>();
+
+            DayPrice previous = null;
+            foreach (DayPrice dayPrice in DayPriceCollection)
+            {
+                if (previous != null)
+                {
+                    // Calculate percentage change from previous day
+                    DayPrice dayPriceChange = new DayPrice();
+                    dayPriceChange.DayPriceDate = dayPrice.DayPriceDate;
+                    //if (previous.DayPriceOpen > 0) dayPriceChange.DayPriceOpen = 1.0M - ((dayPrice.DayPriceOpen - previous.DayPriceOpen) / previous.DayPriceOpen);
+                    //if (previous.DayPriceHigh > 0) dayPriceChange.DayPriceHigh = 1.0M - ((dayPrice.DayPriceHigh - previous.DayPriceHigh) / previous.DayPriceHigh);
+                    //if (previous.DayPriceLow > 0) dayPriceChange.DayPriceLow = 1.0M - ((dayPrice.DayPriceLow - previous.DayPriceLow) / previous.DayPriceLow);
+                    if (previous.DayPriceClose > 0) dayPriceChange.DayPriceClose = 1.0M - ((dayPrice.DayPriceClose - previous.DayPriceClose) / previous.DayPriceClose);
+                    //if (previous.DayPriceAdjustedClose > 0) dayPriceChange.DayPriceAdjustedClose = 1.0M - ((dayPrice.DayPriceAdjustedClose - previous.DayPriceAdjustedClose) / previous.DayPriceAdjustedClose);
+                    //if (previous.DayPriceVolume > 0) dayPriceChange.VolumeChange = 1.0 - ((double)((dayPrice.DayPriceVolume - previous.DayPriceVolume) / previous.DayPriceVolume));
+                    dayChangeCollection.Add(dayPriceChange);
+                }
+                previous = dayPrice;
+            }
+
+            DayChangeCollection = new ObservableCollection<DayPrice>(dayChangeCollection);
         }
 
         private void ReportQueryBegin()

@@ -8,6 +8,8 @@ namespace ReportWatch.Database
 {
     public partial class DayPrice
     {
+        public double VolumeChange { get; set; }
+
         public double[] Candlestick
         {
             get

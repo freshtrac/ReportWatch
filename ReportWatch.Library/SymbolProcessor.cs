@@ -94,7 +94,9 @@ namespace ReportWatch.Library
                     }
                 }
 
-                _entities.SaveChanges();
+                // Don't allow this to execute on multiple thread simultaneously
+                // It will throw a null reference exception
+                //_entities.SaveChanges(); 
 
                 // Get the DayPrice history
                 DayPriceDownloader dayPriceDownloader = new DayPriceDownloader(reportDownloader.SymbolName);
