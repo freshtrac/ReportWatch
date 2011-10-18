@@ -24,3 +24,5 @@ Thumbs.db
 obj/
 [Rr]elease*/
 [Tt]est[Rr]esult*
+ReportWatch.Silverlight.Data/Generated_Code/ReportWatch.Service.g.cs
+ReportWatch.Service/ClientBin/ReportWatch.Silverlight.xap
