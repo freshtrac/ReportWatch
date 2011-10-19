@@ -21,12 +21,8 @@ namespace ReportWatch.Silverlight
 
     public class ReportWatchViewModel : ViewModelBase
     {
-        private ObservableCollection<Report> _ReportCollection = new ObservableCollection<Report>();
-
-        private List<Symbol> _SymbolCollection = new List<Symbol>();
 
         private DataServiceContext context = null;
-
 
         #region Constructor
 
@@ -34,7 +30,10 @@ namespace ReportWatch.Silverlight
         public ReportWatchViewModel()
         {
             this.context = new DataServiceContext(new Uri("http://localhost:55555/ReportWatchService.svc", UriKind.Absolute));
-            this.SymbolQueryBegin();
+            SymbolQueryBegin();
+            IndexQueryBegin("^DJI");
+            IndexQueryBegin("^GSPC");
+            IndexQueryBegin("^IXIC");
         }
 
         #endregion
@@ -119,7 +118,8 @@ namespace ReportWatch.Silverlight
             {
                 this._SelectedSymbol = value;
                 base.NotifyPropertyChanged("CompanyName");
-                this.DayPriceQueryBegin();
+                base.NotifyPropertyChanged("IndexChangeCollection");
+                this.DayPriceQueryBegin(this._SelectedSymbol.SymbolName);
                 this.ReportQueryBegin();
             }
         }
@@ -206,7 +206,7 @@ namespace ReportWatch.Silverlight
                 double num = 0.0;
                 if (this.DayChangeCollection.Count > 0)
                 {
-                    num = (double)(from d in this.DayChangeCollection.Cast<DayPrice>() select d.DayPriceClose).Min<decimal>();
+                    num = (double)(from d in this.DayChangeDifferenceCollection.Cast<DayPrice>() select d.DayPriceClose).Min<decimal>();
                 }
                 return num;
             }
@@ -219,17 +219,31 @@ namespace ReportWatch.Silverlight
                 double num = 1.0;
                 if (this.DayChangeCollection.Count > 0)
                 {
-                    num = (double)(from d in this.DayChangeCollection.Cast<DayPrice>() select d.DayPriceClose).Max<decimal>();
+                    num = (double)(from d in this.DayChangeDifferenceCollection.Cast<DayPrice>() select d.DayPriceClose).Max<decimal>();
                 }
                 return num;
             }
         }
 
-        public bool PriceHistoryChartIsBusy
+        private bool _SymbolCollectionIsBusy = false;
+        public bool SymbolCollectionIsBusy
         {
             get
             {
-                return DayPriceQueryIsBusy | ReportQueryIsBusy;
+                return _SymbolCollectionIsBusy;
+            }
+            set
+            {
+                _SymbolCollectionIsBusy = value;
+                base.NotifyPropertyChanged("SymbolCollectionIsBusy");
+            }
+        }
+
+        public bool ChartIsBusy
+        {
+            get
+            {
+                return DayPriceQueryIsBusy | ReportQueryIsBusy | ChangeCalculationIsBusy;
             }
         }
 
@@ -243,7 +257,7 @@ namespace ReportWatch.Silverlight
             set
             {
                 _DayPriceQueryIsBusy = value;
-                base.NotifyPropertyChanged("PriceHistoryChartIsBusy");
+                base.NotifyPropertyChanged("ChartIsBusy");
             }
         }
 
@@ -257,7 +271,21 @@ namespace ReportWatch.Silverlight
             set
             {
                 _ReportQueryIsBusy = value;
-                base.NotifyPropertyChanged("PriceHistoryChartIsBusy");
+                base.NotifyPropertyChanged("ChartIsBusy");
+            }
+        }
+
+        private bool _ChangeCalculationIsBusy = false;
+        public bool ChangeCalculationIsBusy
+        {
+            get
+            {
+                return _ChangeCalculationIsBusy;
+            }
+            set
+            {
+                _ChangeCalculationIsBusy = value;
+                base.NotifyPropertyChanged("ChartIsBusy");
             }
         }
 
@@ -265,6 +293,7 @@ namespace ReportWatch.Silverlight
 
         #region Collections
 
+        private List<Symbol> _SymbolCollection = new List<Symbol>();
         public IOrderedEnumerable<Symbol> SymbolCollection
         {
             get
@@ -293,6 +322,7 @@ namespace ReportWatch.Silverlight
             }
         }
 
+        private ObservableCollection<Report> _ReportCollection = new ObservableCollection<Report>();
         public ObservableCollection<Report> ReportCollection
         {
             get
@@ -322,6 +352,39 @@ namespace ReportWatch.Silverlight
             }
         }
 
+        private Dictionary<String, List<DayPrice>> _IndexCollectionDictionary = new Dictionary<string, List<DayPrice>>();
+        private Dictionary<String, ObservableCollection<DayPrice>> _IndexChangeCollectionDictionary = new Dictionary<string, ObservableCollection<DayPrice>>();
+        public ObservableCollection<DayPrice> IndexChangeCollection
+        {
+            get
+            {
+                if (SelectedSymbol != null)
+                {
+                    return this._IndexChangeCollectionDictionary[SelectedSymbol.IndexSymbolName];
+                }
+                else
+                {
+                    return new ObservableCollection<DayPrice>();
+                }
+            }
+        }
+
+        private ObservableCollection<DayPrice> _DayChangeDifferenceCollection = new ObservableCollection<DayPrice>();
+        public ObservableCollection<DayPrice> DayChangeDifferenceCollection
+        {
+            get
+            {
+                return _DayChangeDifferenceCollection;
+            }
+            set
+            {
+                _DayChangeDifferenceCollection = value;
+                base.NotifyPropertyChanged("DayChangeDifferenceCollection");
+                base.NotifyPropertyChanged("MinimumDayChange");
+                base.NotifyPropertyChanged("MaximumDayChange"); 
+            }
+        }
+
         #endregion
 
         #region Data Retrieval
@@ -331,8 +394,10 @@ namespace ReportWatch.Silverlight
             DataServiceQuery<Symbol> symbolQuery = (DataServiceQuery<Symbol>)
                 from symbol in this.context.CreateQuery<Symbol>("SymbolSet")
                 where symbol.ReportDate == this.SelectedDate
+                orderby symbol.SymbolName ascending
                 select symbol;
             symbolQuery.BeginExecute(new AsyncCallback(this.SymbolRequestCompleted), symbolQuery);
+            SymbolCollectionIsBusy = true;
         }
 
         private void SymbolRequestCompleted(IAsyncResult asyncResult)
@@ -340,20 +405,45 @@ namespace ReportWatch.Silverlight
             DataServiceQuery<Symbol> asyncState = asyncResult.AsyncState as DataServiceQuery<Symbol>;
             _SymbolCollection = asyncState.EndExecute(asyncResult).ToList<Symbol>();
             base.NotifyPropertyChanged("SymbolCollection");
+            SymbolCollectionIsBusy = false;
         }
 
-        private void DayPriceQueryBegin()
+        private void ReportQueryBegin()
+        {
+            DateTime dateStart = DateTime.Parse("2007-07-01");
+            DateTime dateEnd = DateTime.Today;
+            DataServiceQuery<Report> reportQuery = (DataServiceQuery<Report>)
+                from report in this.context.CreateQuery<Report>("ReportSet")
+                where report.SymbolName == this.SymbolName
+                where report.ReportDate > dateStart
+                where report.ReportDate <= dateEnd
+                orderby report.ReportDate ascending
+                select report;
+            reportQuery.BeginExecute(new AsyncCallback(this.ReportRequestCompleted), reportQuery);
+            ReportQueryIsBusy = true;
+        }
+
+        private void ReportRequestCompleted(IAsyncResult asyncResult)
+        {
+            DataServiceQuery<Report> asyncState = asyncResult.AsyncState as DataServiceQuery<Report>;
+            ReportCollection = new ObservableCollection<Report>(asyncState.EndExecute(asyncResult).ToList<Report>());
+            ReportQueryIsBusy = false;
+        }
+
+        private void DayPriceQueryBegin(String symbolName)
         {
             DateTime dateStart = DateTime.Parse("2009-01-01");
             DateTime dateEnd = DateTime.Today;
             DataServiceQuery<DayPrice> dayPriceQuery = (DataServiceQuery<DayPrice>)
                 from dayPrice in this.context.CreateQuery<DayPrice>("DayPriceSet")
-                where dayPrice.SymbolName == this.SymbolName
+                where dayPrice.SymbolName == symbolName
                 where dayPrice.DayPriceDate > dateStart
                 where dayPrice.DayPriceDate <= dateEnd
+                orderby dayPrice.DayPriceDate ascending
                 select dayPrice;
             dayPriceQuery.BeginExecute(new AsyncCallback(this.DayPriceRequestCompleted), dayPriceQuery);
             DayPriceQueryIsBusy = true;
+            ChangeCalculationIsBusy = true;
         }
 
         private void DayPriceRequestCompleted(IAsyncResult asyncResult)
@@ -376,39 +466,89 @@ namespace ReportWatch.Silverlight
                     // Calculate percentage change from previous day
                     DayPrice dayPriceChange = new DayPrice();
                     dayPriceChange.DayPriceDate = dayPrice.DayPriceDate;
-                    //if (previous.DayPriceOpen > 0) dayPriceChange.DayPriceOpen = 1.0M - ((dayPrice.DayPriceOpen - previous.DayPriceOpen) / previous.DayPriceOpen);
-                    //if (previous.DayPriceHigh > 0) dayPriceChange.DayPriceHigh = 1.0M - ((dayPrice.DayPriceHigh - previous.DayPriceHigh) / previous.DayPriceHigh);
-                    //if (previous.DayPriceLow > 0) dayPriceChange.DayPriceLow = 1.0M - ((dayPrice.DayPriceLow - previous.DayPriceLow) / previous.DayPriceLow);
-                    if (previous.DayPriceClose > 0) dayPriceChange.DayPriceClose = 1.0M - ((dayPrice.DayPriceClose - previous.DayPriceClose) / previous.DayPriceClose);
-                    //if (previous.DayPriceAdjustedClose > 0) dayPriceChange.DayPriceAdjustedClose = 1.0M - ((dayPrice.DayPriceAdjustedClose - previous.DayPriceAdjustedClose) / previous.DayPriceAdjustedClose);
-                    //if (previous.DayPriceVolume > 0) dayPriceChange.VolumeChange = 1.0 - ((double)((dayPrice.DayPriceVolume - previous.DayPriceVolume) / previous.DayPriceVolume));
+                    //if (previous.DayPriceOpen > 0) dayPriceChange.DayPriceOpen = ((dayPrice.DayPriceOpen - previous.DayPriceOpen) / previous.DayPriceOpen) * 100.0M;
+                    //if (previous.DayPriceHigh > 0) dayPriceChange.DayPriceHigh = ((dayPrice.DayPriceHigh - previous.DayPriceHigh) / previous.DayPriceHigh) * 100.0M;
+                    //if (previous.DayPriceLow > 0) dayPriceChange.DayPriceLow = ((dayPrice.DayPriceLow - previous.DayPriceLow) / previous.DayPriceLow) * 100.0M;
+                    if (previous.DayPriceClose > 0) dayPriceChange.DayPriceClose = ((dayPrice.DayPriceClose - previous.DayPriceClose) / previous.DayPriceClose) * 100.0M;
+                    //if (previous.DayPriceAdjustedClose > 0) dayPriceChange.DayPriceAdjustedClose = ((dayPrice.DayPriceAdjustedClose - previous.DayPriceAdjustedClose) / previous.DayPriceAdjustedClose) * 100.0M;
+                    //if (previous.DayPriceVolume > 0) dayPriceChange.VolumeChange = ((double)((dayPrice.DayPriceVolume - previous.DayPriceVolume) / previous.DayPriceVolume)) * 100.0;
                     dayChangeCollection.Add(dayPriceChange);
                 }
                 previous = dayPrice;
             }
 
             DayChangeCollection = new ObservableCollection<DayPrice>(dayChangeCollection);
+
+            CalculateDayPriceChangeDifference();
         }
 
-        private void ReportQueryBegin()
+        private void CalculateDayPriceChangeDifference()
         {
-            DateTime dateStart = DateTime.Parse("2007-07-01");
+            List<DayPrice> dayChangeRelativeCollection = new List<DayPrice>();
+
+            foreach (DayPrice dayPrice in DayChangeCollection)
+            {
+                DayPrice indexDayPrice = (from index in IndexChangeCollection where index.DayPriceDate == dayPrice.DayPriceDate select index).FirstOrDefault();
+
+                // Calculate change relative to market index
+                DayPrice dayPriceChangeRelative = new DayPrice();
+                dayPriceChangeRelative.DayPriceDate = dayPrice.DayPriceDate;
+                if (indexDayPrice!=null) dayPriceChangeRelative.DayPriceClose = dayPrice.DayPriceClose - indexDayPrice.DayPriceClose;
+                dayChangeRelativeCollection.Add(dayPriceChangeRelative);
+            }
+
+            DayChangeDifferenceCollection = new ObservableCollection<DayPrice>(dayChangeRelativeCollection);
+
+            ChangeCalculationIsBusy = false;
+        }
+
+        private void IndexQueryBegin(String indexName)
+        {
+            DateTime dateStart = DateTime.Parse("2009-01-01");
             DateTime dateEnd = DateTime.Today;
-            DataServiceQuery<Report> reportQuery = (DataServiceQuery<Report>)
-                from report in this.context.CreateQuery<Report>("ReportSet")
-                where report.SymbolName == this.SymbolName
-                where report.ReportDate > dateStart
-                where report.ReportDate <= dateEnd
-                select report;
-            reportQuery.BeginExecute(new AsyncCallback(this.ReportRequestCompleted), reportQuery);
-            ReportQueryIsBusy = true;
+            DataServiceQuery<DayPrice> dayPriceQuery = (DataServiceQuery<DayPrice>)
+                from dayPrice in this.context.CreateQuery<DayPrice>("DayPriceSet")
+                where dayPrice.SymbolName == indexName
+                where dayPrice.DayPriceDate > dateStart
+                where dayPrice.DayPriceDate <= dateEnd
+                orderby dayPrice.DayPriceDate ascending
+                select dayPrice;
+            dayPriceQuery.BeginExecute(new AsyncCallback(this.IndexRequestCompleted), dayPriceQuery);
         }
 
-        private void ReportRequestCompleted(IAsyncResult asyncResult)
+        private void IndexRequestCompleted(IAsyncResult asyncResult)
         {
-            DataServiceQuery<Report> asyncState = asyncResult.AsyncState as DataServiceQuery<Report>;
-            ReportCollection = new ObservableCollection<Report>(asyncState.EndExecute(asyncResult).ToList<Report>());
-            ReportQueryIsBusy = false;
+            DataServiceQuery<DayPrice> asyncState = asyncResult.AsyncState as DataServiceQuery<DayPrice>;
+            List<DayPrice> indexCollection = asyncState.EndExecute(asyncResult).ToList<DayPrice>();
+            String indexName = indexCollection.Select(index => index.SymbolName).First();
+            _IndexCollectionDictionary.Add(indexName, indexCollection);
+            CalculateIndexChange(indexName, indexCollection);
+        }
+
+        private void CalculateIndexChange(string indexName, List<DayPrice> indexCollection)
+        {
+            List<DayPrice> dayChangeCollection = new List<DayPrice>();
+
+            DayPrice previous = null;
+            foreach (DayPrice dayPrice in indexCollection)
+            {
+                if (previous != null)
+                {
+                    // Calculate percentage change from previous day
+                    DayPrice dayPriceChange = new DayPrice();
+                    dayPriceChange.DayPriceDate = dayPrice.DayPriceDate;
+                    //if (previous.DayPriceOpen > 0) dayPriceChange.DayPriceOpen = ((dayPrice.DayPriceOpen - previous.DayPriceOpen) / previous.DayPriceOpen) * 100.0M;
+                    //if (previous.DayPriceHigh > 0) dayPriceChange.DayPriceHigh = ((dayPrice.DayPriceHigh - previous.DayPriceHigh) / previous.DayPriceHigh) * 100.0M;
+                    //if (previous.DayPriceLow > 0) dayPriceChange.DayPriceLow = ((dayPrice.DayPriceLow - previous.DayPriceLow) / previous.DayPriceLow) * 100.0M;
+                    if (previous.DayPriceClose > 0) dayPriceChange.DayPriceClose = ((dayPrice.DayPriceClose - previous.DayPriceClose) / previous.DayPriceClose) * 100.0M;
+                    //if (previous.DayPriceAdjustedClose > 0) dayPriceChange.DayPriceAdjustedClose = ((dayPrice.DayPriceAdjustedClose - previous.DayPriceAdjustedClose) / previous.DayPriceAdjustedClose) * 100.0M;
+                    //if (previous.DayPriceVolume > 0) dayPriceChange.VolumeChange = ((double)((dayPrice.DayPriceVolume - previous.DayPriceVolume) / previous.DayPriceVolume)) * 100.0;
+                    dayChangeCollection.Add(dayPriceChange);
+                }
+                previous = dayPrice;
+            }
+
+            _IndexChangeCollectionDictionary.Add(indexName, new ObservableCollection<DayPrice>(dayChangeCollection));
         }
 
         #endregion

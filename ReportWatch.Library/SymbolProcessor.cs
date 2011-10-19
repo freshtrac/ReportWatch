@@ -9,15 +9,17 @@ namespace ReportWatch.Library
     public class SymbolProcessor : IDisposable
     {
 
-        private ReportWatchEntities _entities;
+        private static ReportWatchEntities _entities;
         private DateTime _reportDate = new DateTime();
-        private List<string> symbolNameList = null;
+        private List<string> _symbolNameList = null;
+        private List<string> _symbolNameListReport = null;
+        private List<string> _symbolNameListDayPrice = null;
         public delegate void Completed();
         public event Completed OnCompleted;
 
         public SymbolProcessor(DateTime reportDate)
         {
-            this._entities = new ReportWatchEntities();
+            _entities = new ReportWatchEntities();
             this._reportDate = reportDate;
         }
 
@@ -54,18 +56,26 @@ namespace ReportWatch.Library
                 _entities.SaveChanges();
 
                 // Keep track of progress on the list of symbols
-                symbolNameList = (from s in symbolEnumerable select s.SymbolName).ToList<string>();
+                _symbolNameList = (from s in symbolEnumerable select s.SymbolName).ToList<string>();
+                _symbolNameListReport = (from s in symbolEnumerable select s.SymbolName).ToList<string>();
+                _symbolNameListDayPrice = (from s in symbolEnumerable select s.SymbolName).ToList<string>();
+
+                // Load the price history for the market indexes
+                dayPriceDownloader_Enqueue("^DJI",3000);
+                dayPriceDownloader_Enqueue("^IXIC",3000);
+                dayPriceDownloader_Enqueue("^GSPC",3000);
+                System.Threading.Thread.Sleep(10000);
 
                 // Retrieve the report history
-                foreach (Symbol symbol in symbolEnumerable)
+                foreach (String symbolName in _symbolNameList)
                 {
-                    ReportDownloader reportDownloader = new ReportDownloader(symbol.SymbolName);
+                    ReportDownloader reportDownloader = new ReportDownloader(symbolName);
                     reportDownloader.OnLoadDataComplete += new ReportDownloader.LoadDataCompleted(reportDownloader_OnLoadDataComplete);
                     ReportDownloaderQueue reportDownloaderQueue = ReportDownloaderQueue.Instance(5000);
                     reportDownloaderQueue.Enqueue(reportDownloader);
                 }
 
-                if (symbolEnumerable.Count() == 0)
+                if (_symbolNameList.Count() == 0)
                 {
                     if (OnCompleted != null) OnCompleted();
                     this.Dispose();
@@ -94,20 +104,31 @@ namespace ReportWatch.Library
                     }
                 }
 
-                // Don't allow this to execute on multiple thread simultaneously
-                // It will throw a null reference exception
-                //_entities.SaveChanges(); 
+                _entities.SaveChanges();
 
-                // Get the DayPrice history
-                DayPriceDownloader dayPriceDownloader = new DayPriceDownloader(reportDownloader.SymbolName);
-                dayPriceDownloader.OnLoadDataComplete += new DayPriceDownloader.LoadDataCompleted(dayPriceDownloader_OnLoadDataComplete);
-                DayPriceDownloaderQueue dayPriceDownloaderQueue = DayPriceDownloaderQueue.Instance(6000);
-                dayPriceDownloaderQueue.Enqueue(dayPriceDownloader);
+                // Check for process completion
+                if (_symbolNameListReport.Contains(reportDownloader.SymbolName)) _symbolNameListReport.Remove(reportDownloader.SymbolName);
+                if (_symbolNameListReport.Count < 1)
+                {
+                    // Get the DayPrice history
+                    foreach (String symbolName in _symbolNameList)
+                    {
+                        dayPriceDownloader_Enqueue(symbolName, 6000);
+                    }
+                }
             }
             catch (Exception ex)
             {
                 LogOps.LogException(ex);
             }
+        }
+
+        private void dayPriceDownloader_Enqueue(String symbolName, int miliseconds)
+        {
+            DayPriceDownloader dayPriceDownloader = new DayPriceDownloader(symbolName);
+            dayPriceDownloader.OnLoadDataComplete += new DayPriceDownloader.LoadDataCompleted(dayPriceDownloader_OnLoadDataComplete);
+            DayPriceDownloaderQueue dayPriceDownloaderQueue = DayPriceDownloaderQueue.Instance(miliseconds);
+            dayPriceDownloaderQueue.Enqueue(dayPriceDownloader);
         }
 
         void dayPriceDownloader_OnLoadDataComplete(DayPriceDownloader dayPriceDownloader, List<DayPrice> dayPriceList)
@@ -130,10 +151,15 @@ namespace ReportWatch.Library
                 _entities.SaveChanges();
 
                 // Check for process completion
-                symbolNameList.Remove(dayPriceDownloader.SymbolName);
-                if (symbolNameList.Count == 0)
+                if(_symbolNameListDayPrice.Contains(dayPriceDownloader.SymbolName)) _symbolNameListDayPrice.Remove(dayPriceDownloader.SymbolName);
+                if (_symbolNameListDayPrice.Count < 1)
                 {
+                    _entities.SetDayPriceHigh(_reportDate);
+
                     if (OnCompleted != null) OnCompleted();
+
+                    System.Threading.Thread.Sleep(2000);
+
                     this.Dispose();
                 }
             }

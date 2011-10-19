@@ -64,18 +64,21 @@
             </StackPanel>
         </Border>
 
-        <ItemsControl Name="SymbolCollectionUserControl" Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Path=SymbolCollection}" Background="BlanchedAlmond" Margin="10">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <toolkit:WrapPanel Orientation="Vertical"  HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <RadioButton Content="{Binding Path=SymbolName}" Click="RadioButton_Click" CommandParameter="{Binding Path=SymbolName}" />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+        <toolkit:BusyIndicator Grid.Row="0" Grid.Column="1" IsBusy="{Binding SymbolCollectionIsBusy}" VerticalAlignment="Stretch" >
+            <ItemsControl Name="SymbolCollectionUserControl"  ItemsSource="{Binding Path=SymbolCollection}" Background="BlanchedAlmond" Margin="10">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <toolkit:WrapPanel Orientation="Vertical"  HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <RadioButton Content="{Binding Path=SymbolName}" Click="RadioButton_Click" CommandParameter="{Binding Path=SymbolName}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </toolkit:BusyIndicator>
+
         <telerik:RadTabControl Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Stretch"
 				DisplayMemberPath="Content" DropDownDisplayMode="Visible" ScrollMode="Viewport"
 				Background="#dde1ea" BorderThickness="0">
@@ -84,8 +87,8 @@
                     <TextBlock Text="Price History" Margin="19 2 19 0" />
                 </telerik:RadTabItem.Header>
                 <telerik:RadTabItem.Content>
-                    <toolkit:BusyIndicator IsBusy="{Binding PriceHistoryChartIsBusy}" VerticalAlignment="Stretch" >
-                        <vc:Chart Name="ReportWatchChart" VerticalAlignment="Stretch"  Theme="Theme2" BorderBrush="Gray" BorderThickness="0.5" ScrollingEnabled="True" AnimatedUpdate="true" ZoomingEnabled="True">
+                    <toolkit:BusyIndicator IsBusy="{Binding ChartIsBusy}" VerticalAlignment="Stretch" >
+                        <vc:Chart Name="PriceHistoryChart" VerticalAlignment="Stretch"  Theme="Theme2" BorderBrush="Gray" BorderThickness="0.5" ScrollingEnabled="True" AnimatedUpdate="true" ZoomingEnabled="True">
                             <vc:Chart.Background>
                                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                     <GradientStop Color="White" Offset="0.5"/>
@@ -128,7 +131,7 @@
                                     </vc:DataSeries.DataMappings>
                                 </vc:DataSeries>
 
-                                <vc:DataSeries RenderAs="Column" LegendText="Volume" XValueType="DateTime"  DataSource="{Binding DayPriceCollection}" XValueFormatString="yyyy-MM-dd" AxisYType="Secondary" Color="Blue" Opacity="0.5">
+                                <vc:DataSeries RenderAs="Column" LegendText="Volume" XValueType="DateTime"  DataSource="{Binding DayPriceCollection}" XValueFormatString="yyyy-MM-dd" AxisYType="Secondary" Color="Blue" Opacity="0.3">
                                     <vc:DataSeries.DataMappings>
                                         <vc:DataMapping MemberName="XValue" Path="DayPriceDate"/>
                                         <vc:DataMapping MemberName="YValue" Path="DayPriceVolume"/>
@@ -148,13 +151,13 @@
                     </toolkit:BusyIndicator>
                 </telerik:RadTabItem.Content>
             </telerik:RadTabItem>
-            <telerik:RadTabItem Padding="4 1" DropDownContent="Relative Change">
+            <telerik:RadTabItem Padding="4 1" DropDownContent="Percent Change">
                 <telerik:RadTabItem.Header>
-                    <TextBlock Text="Relative Change" Margin="19 2 19 0" />
+                    <TextBlock Text="Percent Change" Margin="19 2 19 0" />
                 </telerik:RadTabItem.Header>
                 <telerik:RadTabItem.Content>
-                    <toolkit:BusyIndicator IsBusy="{Binding PriceHistoryChartIsBusy}" VerticalAlignment="Stretch" >
-                        <vc:Chart Name="RelativeChangeChart" VerticalAlignment="Stretch" Theme="Theme2" BorderBrush="Gray" BorderThickness="0.5" ScrollingEnabled="True" AnimatedUpdate="true" ZoomingEnabled="True">
+                    <toolkit:BusyIndicator IsBusy="{Binding ChartIsBusy}" VerticalAlignment="Stretch" >
+                        <vc:Chart Name="PercentChangeChart" VerticalAlignment="Stretch" Theme="Theme2" BorderBrush="Gray" BorderThickness="0.5" ScrollingEnabled="True" AnimatedUpdate="true" ZoomingEnabled="True">
                             <vc:Chart.Background>
                                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                     <GradientStop Color="White" Offset="0.5"/>
@@ -165,7 +168,8 @@
                             </vc:Chart.Background>
 
                             <vc:Chart.Titles>
-                                <vc:Title Text="{Binding Path=CompanyName}" Padding="4"/>
+                                <vc:Title Text="{Binding Path=CompanyName}" Padding="4">
+                                </vc:Title>
                             </vc:Chart.Titles>
 
                             <vc:Chart.PlotArea>
@@ -181,7 +185,7 @@
                             </vc:Chart.AxesX>
 
                             <vc:Chart.AxesY>
-                                <vc:Axis Title="Price Percentage Change" />
+                                <vc:Axis Title="Price Percentage Change" AxisMinimum="{Binding MinimumDayChange}" AxisMaximum="{Binding MaximumDayChange}"/>
                             </vc:Chart.AxesY>
 
                             <vc:Chart.ToolTips>
@@ -191,6 +195,27 @@
                             <vc:Chart.Series>
 
                                 <vc:DataSeries RenderAs="Column" LegendText="Percent Change" XValueType="DateTime"  DataSource="{Binding DayChangeCollection}" XValueFormatString="yyyy-MM-dd" Color="Blue" Opacity="0.5">
+                                    <vc:DataSeries.DataMappings>
+                                        <vc:DataMapping MemberName="XValue" Path="DayPriceDate"/>
+                                        <vc:DataMapping MemberName="YValue" Path="DayPriceClose"/>
+                                    </vc:DataSeries.DataMappings>
+                                </vc:DataSeries>
+
+                                <vc:DataSeries RenderAs="Column" LegendText="Index Change" XValueType="DateTime"  DataSource="{Binding IndexChangeCollection}" XValueFormatString="yyyy-MM-dd" Color="Orange" Opacity="0.5">
+                                    <vc:DataSeries.DataMappings>
+                                        <vc:DataMapping MemberName="XValue" Path="DayPriceDate"/>
+                                        <vc:DataMapping MemberName="YValue" Path="DayPriceClose"/>
+                                    </vc:DataSeries.DataMappings>
+                                </vc:DataSeries>
+
+                                <vc:DataSeries RenderAs="Column" LegendText="Relative Change" XValueType="DateTime"  DataSource="{Binding DayChangeDifferenceCollection}" XValueFormatString="yyyy-MM-dd" Color="Green">
+                                    <vc:DataSeries.DataMappings>
+                                        <vc:DataMapping MemberName="XValue" Path="DayPriceDate"/>
+                                        <vc:DataMapping MemberName="YValue" Path="DayPriceClose"/>
+                                    </vc:DataSeries.DataMappings>
+                                </vc:DataSeries>
+
+                                <vc:DataSeries RenderAs="Line" LegendText="Relative Change Line" XValueType="DateTime" DataSource="{Binding DayChangeDifferenceCollection}" XValueFormatString="yyyy-MM-dd" Color="Green" Opacity="0.5">
                                     <vc:DataSeries.DataMappings>
                                         <vc:DataMapping MemberName="XValue" Path="DayPriceDate"/>
                                         <vc:DataMapping MemberName="YValue" Path="DayPriceClose"/>

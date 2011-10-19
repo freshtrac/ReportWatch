@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="ReportWatchModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2005" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+    <Schema Namespace="ReportWatchModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
         <EntityContainer Name="ReportWatchModelStoreContainer">
           <EntitySet Name="DayPriceSet" EntityType="ReportWatchModel.Store.DayPriceSet" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="ExceptionLogSet" EntityType="ReportWatchModel.Store.ExceptionLogSet" store:Type="Tables" Schema="dbo" />
@@ -26,7 +26,7 @@
           </Key>
           <Property Name="DayPriceId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="SymbolName" Type="nvarchar" Nullable="false" MaxLength="10" />
-          <Property Name="DayPriceDate" Type="datetime" Nullable="false" />
+          <Property Name="DayPriceDate" Type="datetime2" Nullable="false" />
           <Property Name="DayPriceOpen" Type="decimal" Nullable="false" Precision="10" Scale="4" />
           <Property Name="DayPriceHigh" Type="decimal" Nullable="false" Precision="10" Scale="4" />
           <Property Name="DayPriceLow" Type="decimal" Nullable="false" Precision="10" Scale="4" />
@@ -39,7 +39,7 @@
             <PropertyRef Name="ExceptionLogId" />
           </Key>
           <Property Name="ExceptionLogId" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="ExceptionLogDate" Type="datetime" Nullable="false" />
+          <Property Name="ExceptionLogDate" Type="datetime2" Nullable="false" />
           <Property Name="ExceptionLogMessage" Type="nvarchar" Nullable="false" MaxLength="255" />
           <Property Name="ExceptionLogStackTrace" Type="nvarchar(max)" Nullable="false" />
         </EntityType>
@@ -50,7 +50,7 @@
           </Key>
           <Property Name="ReportId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="SymbolName" Type="nvarchar" Nullable="false" MaxLength="10" />
-          <Property Name="ReportDate" Type="datetime" Nullable="false" />
+          <Property Name="ReportDate" Type="datetime2" Nullable="false" />
           <Property Name="ReportActual" Type="decimal" Nullable="false" Precision="10" Scale="4" />
           <Property Name="ReportExpected" Type="decimal" Nullable="false" Precision="10" Scale="4" />
           <Property Name="ReportPreviousYear" Type="decimal" Nullable="false" Precision="10" Scale="4" />
@@ -65,7 +65,7 @@
           <Property Name="SymbolName" Type="nvarchar" Nullable="false" MaxLength="10" />
           <Property Name="IndexSymbolName" Type="nvarchar" Nullable="false" MaxLength="10" />
           <Property Name="CompanyName" Type="nvarchar" Nullable="false" MaxLength="250" />
-          <Property Name="ReportDate" Type="datetime" />
+          <Property Name="ReportDate" Type="datetime2" />
         </EntityType>
         <Association Name="FK_Day_Symbol">
           <End Role="SymbolSet" Type="ReportWatchModel.Store.SymbolSet" Multiplicity="1" />
@@ -91,11 +91,10 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Function Name="UpdateReportPriceHigh" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+        <Function Name="SetDayPriceHigh" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="DateReport" Type="datetime" Mode="In" />
         </Function>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="ReportWatchModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
@@ -112,6 +111,9 @@
             <End Role="SymbolSet" EntitySet="SymbolSet" />
             <End Role="ReportSet" EntitySet="ReportSet" />
           </AssociationSet>
+          <FunctionImport Name="SetDayPriceHigh">
+            <Parameter Name="DateReport" Mode="In" Type="DateTime" />
+          </FunctionImport>
         </EntityContainer>
         <EntityType Name="DayPrice">
           <Key>
@@ -229,6 +231,7 @@
             <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
             <ScalarProperty Name="ReportDate" ColumnName="ReportDate" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SetDayPriceHigh" FunctionName="ReportWatchModel.Store.SetDayPriceHigh" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

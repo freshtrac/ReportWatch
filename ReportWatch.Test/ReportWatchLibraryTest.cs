@@ -33,7 +33,7 @@ namespace ReportWatch.Test
         [TestMethod]
         public void AsyncTest()
         {
-            SymbolProcessor symbolProcessor = new SymbolProcessor(DateTime.Parse("2011-10-14"));
+            SymbolProcessor symbolProcessor = new SymbolProcessor(DateTime.Parse("2011-10-19"));
             symbolProcessor.OnCompleted += new SymbolProcessor.Completed(symbolProcessor_OnCompleted);
             symbolProcessor.Process();
 

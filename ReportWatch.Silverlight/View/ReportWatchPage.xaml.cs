@@ -25,6 +25,13 @@ namespace ReportWatch.Silverlight
             InitializeComponent();
             this.DataContext = new ReportWatchViewModel();
             ((ReportWatchViewModel)this.DataContext).UseDispatcher(this.Dispatcher);
+
+
+            PriceHistoryChart.AxesX[0].OnZoom += new EventHandler<AxisZoomEventArgs>(PriceHistoryChart_OnZoom);
+            PercentChangeChart.AxesX[0].OnZoom += new EventHandler<AxisZoomEventArgs>(PercentChangeChart_OnZoom);
+
+            PriceHistoryChart.AxesX[0].Scroll += new EventHandler<AxisScrollEventArgs>(PriceHistoryChart_Scroll);
+            PercentChangeChart.AxesX[0].Scroll += new EventHandler<AxisScrollEventArgs>(PercentChangeChart_Scroll);
         }
 
         private void RadioButton_Click(object sender, RoutedEventArgs e)
@@ -35,5 +42,32 @@ namespace ReportWatch.Silverlight
                 ((ReportWatchViewModel)this.DataContext).SymbolName = button.CommandParameter.ToString();
             }
         }
+
+        void PriceHistoryChart_Scroll(object sender, AxisScrollEventArgs e)
+        {
+            Axis axis = sender as Axis;
+            PercentChangeChart.AxesX[0].ScrollBarOffset = axis.ScrollBarOffset;
+        }
+
+        void PercentChangeChart_Scroll(object sender, AxisScrollEventArgs e)
+        {
+            Axis axis = sender as Axis;
+            PriceHistoryChart.AxesX[0].ScrollBarOffset = axis.ScrollBarOffset;
+        }
+
+        void PriceHistoryChart_OnZoom(object sender, AxisZoomEventArgs e)
+        {
+            Axis axis = sender as Axis;
+            PercentChangeChart.AxesX[0].Zoom(e.MaxValue, e.MinValue);
+            PercentChangeChart.AxesX[0].ScrollBarOffset = axis.ScrollBarOffset;
+        }
+
+        void PercentChangeChart_OnZoom(object sender, AxisZoomEventArgs e)
+        {
+            Axis axis = sender as Axis;
+            PriceHistoryChart.AxesX[0].Zoom(e.MaxValue, e.MinValue);
+            PriceHistoryChart.AxesX[0].ScrollBarOffset = axis.ScrollBarOffset;
+        }
+
     }
 }

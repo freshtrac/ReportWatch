@@ -171,6 +171,28 @@ namespace ReportWatch.Database
         }
 
         #endregion
+        #region Function Imports
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        /// <param name="dateReport">No Metadata Documentation available.</param>
+        public int SetDayPriceHigh(Nullable<global::System.DateTime> dateReport)
+        {
+            ObjectParameter dateReportParameter;
+            if (dateReport.HasValue)
+            {
+                dateReportParameter = new ObjectParameter("DateReport", dateReport);
+            }
+            else
+            {
+                dateReportParameter = new ObjectParameter("DateReport", typeof(global::System.DateTime));
+            }
+    
+            return base.ExecuteFunction("SetDayPriceHigh", dateReportParameter);
+        }
+
+        #endregion
     }
     
 
