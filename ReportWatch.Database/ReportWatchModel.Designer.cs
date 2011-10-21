@@ -20,6 +20,8 @@ using System.Runtime.Serialization;
 
 [assembly: EdmRelationshipAttribute("ReportWatchModel", "FK_Day_Symbol", "SymbolSet", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(ReportWatch.Database.Symbol), "DayPriceSet", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ReportWatch.Database.DayPrice), true)]
 [assembly: EdmRelationshipAttribute("ReportWatchModel", "FK_Report_Symbol", "SymbolSet", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(ReportWatch.Database.Symbol), "ReportSet", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ReportWatch.Database.Report), true)]
+[assembly: EdmRelationshipAttribute("ReportWatchModel", "FK_DayChange_Symbol", "Symbol", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(ReportWatch.Database.Symbol), "DayChangeSet", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ReportWatch.Database.DayChange), true)]
+[assembly: EdmRelationshipAttribute("ReportWatchModel", "FK_DayDifference_Symbol", "Symbol", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(ReportWatch.Database.Symbol), "DayDifferenceSet", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(ReportWatch.Database.DayDifference), true)]
 
 #endregion
 
@@ -134,6 +136,38 @@ namespace ReportWatch.Database
             }
         }
         private ObjectSet<Symbol> _SymbolSet;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<DayChange> DayChangeSet
+        {
+            get
+            {
+                if ((_DayChangeSet == null))
+                {
+                    _DayChangeSet = base.CreateObjectSet<DayChange>("DayChangeSet");
+                }
+                return _DayChangeSet;
+            }
+        }
+        private ObjectSet<DayChange> _DayChangeSet;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<DayDifference> DayDifferenceSet
+        {
+            get
+            {
+                if ((_DayDifferenceSet == null))
+                {
+                    _DayDifferenceSet = base.CreateObjectSet<DayDifference>("DayDifferenceSet");
+                }
+                return _DayDifferenceSet;
+            }
+        }
+        private ObjectSet<DayDifference> _DayDifferenceSet;
 
         #endregion
         #region AddTo Methods
@@ -169,6 +203,22 @@ namespace ReportWatch.Database
         {
             base.AddObject("SymbolSet", symbol);
         }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the DayChangeSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToDayChangeSet(DayChange dayChange)
+        {
+            base.AddObject("DayChangeSet", dayChange);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the DayDifferenceSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToDayDifferenceSet(DayDifference dayDifference)
+        {
+            base.AddObject("DayDifferenceSet", dayDifference);
+        }
 
         #endregion
         #region Function Imports
@@ -191,6 +241,44 @@ namespace ReportWatch.Database
     
             return base.ExecuteFunction("SetDayPriceHigh", dateReportParameter);
         }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        /// <param name="symbolName">No Metadata Documentation available.</param>
+        public int CalculateDayChange(global::System.String symbolName)
+        {
+            ObjectParameter symbolNameParameter;
+            if (symbolName != null)
+            {
+                symbolNameParameter = new ObjectParameter("symbolName", symbolName);
+            }
+            else
+            {
+                symbolNameParameter = new ObjectParameter("symbolName", typeof(global::System.String));
+            }
+    
+            return base.ExecuteFunction("CalculateDayChange", symbolNameParameter);
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        /// <param name="symbolName">No Metadata Documentation available.</param>
+        public int CalculateDayDifference(global::System.String symbolName)
+        {
+            ObjectParameter symbolNameParameter;
+            if (symbolName != null)
+            {
+                symbolNameParameter = new ObjectParameter("symbolName", symbolName);
+            }
+            else
+            {
+                symbolNameParameter = new ObjectParameter("symbolName", typeof(global::System.String));
+            }
+    
+            return base.ExecuteFunction("CalculateDayDifference", symbolNameParameter);
+        }
 
         #endregion
     }
@@ -199,6 +287,620 @@ namespace ReportWatch.Database
     #endregion
     
     #region Entities
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="ReportWatchModel", Name="DayChange")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class DayChange : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new DayChange object.
+        /// </summary>
+        /// <param name="dayChangeId">Initial value of the DayChangeId property.</param>
+        /// <param name="symbolName">Initial value of the SymbolName property.</param>
+        /// <param name="dayChangeDate">Initial value of the DayChangeDate property.</param>
+        /// <param name="dayChangeOpen">Initial value of the DayChangeOpen property.</param>
+        /// <param name="dayChangeHigh">Initial value of the DayChangeHigh property.</param>
+        /// <param name="dayChangeLow">Initial value of the DayChangeLow property.</param>
+        /// <param name="dayChangeClose">Initial value of the DayChangeClose property.</param>
+        /// <param name="dayChangeAdjustedClose">Initial value of the DayChangeAdjustedClose property.</param>
+        /// <param name="dayChangeVolume">Initial value of the DayChangeVolume property.</param>
+        public static DayChange CreateDayChange(global::System.Guid dayChangeId, global::System.String symbolName, global::System.DateTime dayChangeDate, global::System.Double dayChangeOpen, global::System.Double dayChangeHigh, global::System.Double dayChangeLow, global::System.Double dayChangeClose, global::System.Double dayChangeAdjustedClose, global::System.Double dayChangeVolume)
+        {
+            DayChange dayChange = new DayChange();
+            dayChange.DayChangeId = dayChangeId;
+            dayChange.SymbolName = symbolName;
+            dayChange.DayChangeDate = dayChangeDate;
+            dayChange.DayChangeOpen = dayChangeOpen;
+            dayChange.DayChangeHigh = dayChangeHigh;
+            dayChange.DayChangeLow = dayChangeLow;
+            dayChange.DayChangeClose = dayChangeClose;
+            dayChange.DayChangeAdjustedClose = dayChangeAdjustedClose;
+            dayChange.DayChangeVolume = dayChangeVolume;
+            return dayChange;
+        }
+
+        #endregion
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid DayChangeId
+        {
+            get
+            {
+                return _DayChangeId;
+            }
+            set
+            {
+                if (_DayChangeId != value)
+                {
+                    OnDayChangeIdChanging(value);
+                    ReportPropertyChanging("DayChangeId");
+                    _DayChangeId = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("DayChangeId");
+                    OnDayChangeIdChanged();
+                }
+            }
+        }
+        private global::System.Guid _DayChangeId;
+        partial void OnDayChangeIdChanging(global::System.Guid value);
+        partial void OnDayChangeIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String SymbolName
+        {
+            get
+            {
+                return _SymbolName;
+            }
+            set
+            {
+                if (_SymbolName != value)
+                {
+                    OnSymbolNameChanging(value);
+                    ReportPropertyChanging("SymbolName");
+                    _SymbolName = StructuralObject.SetValidValue(value, false);
+                    ReportPropertyChanged("SymbolName");
+                    OnSymbolNameChanged();
+                }
+            }
+        }
+        private global::System.String _SymbolName;
+        partial void OnSymbolNameChanging(global::System.String value);
+        partial void OnSymbolNameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime DayChangeDate
+        {
+            get
+            {
+                return _DayChangeDate;
+            }
+            set
+            {
+                OnDayChangeDateChanging(value);
+                ReportPropertyChanging("DayChangeDate");
+                _DayChangeDate = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DayChangeDate");
+                OnDayChangeDateChanged();
+            }
+        }
+        private global::System.DateTime _DayChangeDate;
+        partial void OnDayChangeDateChanging(global::System.DateTime value);
+        partial void OnDayChangeDateChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Double DayChangeOpen
+        {
+            get
+            {
+                return _DayChangeOpen;
+            }
+            set
+            {
+                OnDayChangeOpenChanging(value);
+                ReportPropertyChanging("DayChangeOpen");
+                _DayChangeOpen = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DayChangeOpen");
+                OnDayChangeOpenChanged();
+            }
+        }
+        private global::System.Double _DayChangeOpen;
+        partial void OnDayChangeOpenChanging(global::System.Double value);
+        partial void OnDayChangeOpenChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Double DayChangeHigh
+        {
+            get
+            {
+                return _DayChangeHigh;
+            }
+            set
+            {
+                OnDayChangeHighChanging(value);
+                ReportPropertyChanging("DayChangeHigh");
+                _DayChangeHigh = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DayChangeHigh");
+                OnDayChangeHighChanged();
+            }
+        }
+        private global::System.Double _DayChangeHigh;
+        partial void OnDayChangeHighChanging(global::System.Double value);
+        partial void OnDayChangeHighChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Double DayChangeLow
+        {
+            get
+            {
+                return _DayChangeLow;
+            }
+            set
+            {
+                OnDayChangeLowChanging(value);
+                ReportPropertyChanging("DayChangeLow");
+                _DayChangeLow = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DayChangeLow");
+                OnDayChangeLowChanged();
+            }
+        }
+        private global::System.Double _DayChangeLow;
+        partial void OnDayChangeLowChanging(global::System.Double value);
+        partial void OnDayChangeLowChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Double DayChangeClose
+        {
+            get
+            {
+                return _DayChangeClose;
+            }
+            set
+            {
+                OnDayChangeCloseChanging(value);
+                ReportPropertyChanging("DayChangeClose");
+                _DayChangeClose = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DayChangeClose");
+                OnDayChangeCloseChanged();
+            }
+        }
+        private global::System.Double _DayChangeClose;
+        partial void OnDayChangeCloseChanging(global::System.Double value);
+        partial void OnDayChangeCloseChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Double DayChangeAdjustedClose
+        {
+            get
+            {
+                return _DayChangeAdjustedClose;
+            }
+            set
+            {
+                OnDayChangeAdjustedCloseChanging(value);
+                ReportPropertyChanging("DayChangeAdjustedClose");
+                _DayChangeAdjustedClose = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DayChangeAdjustedClose");
+                OnDayChangeAdjustedCloseChanged();
+            }
+        }
+        private global::System.Double _DayChangeAdjustedClose;
+        partial void OnDayChangeAdjustedCloseChanging(global::System.Double value);
+        partial void OnDayChangeAdjustedCloseChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Double DayChangeVolume
+        {
+            get
+            {
+                return _DayChangeVolume;
+            }
+            set
+            {
+                OnDayChangeVolumeChanging(value);
+                ReportPropertyChanging("DayChangeVolume");
+                _DayChangeVolume = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DayChangeVolume");
+                OnDayChangeVolumeChanged();
+            }
+        }
+        private global::System.Double _DayChangeVolume;
+        partial void OnDayChangeVolumeChanging(global::System.Double value);
+        partial void OnDayChangeVolumeChanged();
+
+        #endregion
+    
+        #region Navigation Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("ReportWatchModel", "FK_DayChange_Symbol", "Symbol")]
+        public Symbol SymbolSet
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Symbol>("ReportWatchModel.FK_DayChange_Symbol", "Symbol").Value;
+            }
+            set
+            {
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Symbol>("ReportWatchModel.FK_DayChange_Symbol", "Symbol").Value = value;
+            }
+        }
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [BrowsableAttribute(false)]
+        [DataMemberAttribute()]
+        public EntityReference<Symbol> SymbolSetReference
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Symbol>("ReportWatchModel.FK_DayChange_Symbol", "Symbol");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Symbol>("ReportWatchModel.FK_DayChange_Symbol", "Symbol", value);
+                }
+            }
+        }
+
+        #endregion
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="ReportWatchModel", Name="DayDifference")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class DayDifference : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new DayDifference object.
+        /// </summary>
+        /// <param name="dayDifferenceId">Initial value of the DayDifferenceId property.</param>
+        /// <param name="symbolName">Initial value of the SymbolName property.</param>
+        /// <param name="dayDifferenceDate">Initial value of the DayDifferenceDate property.</param>
+        /// <param name="dayDifferenceOpen">Initial value of the DayDifferenceOpen property.</param>
+        /// <param name="dayDifferenceHigh">Initial value of the DayDifferenceHigh property.</param>
+        /// <param name="dayDifferenceLow">Initial value of the DayDifferenceLow property.</param>
+        /// <param name="dayDifferenceClose">Initial value of the DayDifferenceClose property.</param>
+        /// <param name="dayDifferenceAdjustedClose">Initial value of the DayDifferenceAdjustedClose property.</param>
+        /// <param name="dayDifferenceVolume">Initial value of the DayDifferenceVolume property.</param>
+        public static DayDifference CreateDayDifference(global::System.Guid dayDifferenceId, global::System.String symbolName, global::System.DateTime dayDifferenceDate, global::System.Double dayDifferenceOpen, global::System.Double dayDifferenceHigh, global::System.Double dayDifferenceLow, global::System.Double dayDifferenceClose, global::System.Double dayDifferenceAdjustedClose, global::System.Double dayDifferenceVolume)
+        {
+            DayDifference dayDifference = new DayDifference();
+            dayDifference.DayDifferenceId = dayDifferenceId;
+            dayDifference.SymbolName = symbolName;
+            dayDifference.DayDifferenceDate = dayDifferenceDate;
+            dayDifference.DayDifferenceOpen = dayDifferenceOpen;
+            dayDifference.DayDifferenceHigh = dayDifferenceHigh;
+            dayDifference.DayDifferenceLow = dayDifferenceLow;
+            dayDifference.DayDifferenceClose = dayDifferenceClose;
+            dayDifference.DayDifferenceAdjustedClose = dayDifferenceAdjustedClose;
+            dayDifference.DayDifferenceVolume = dayDifferenceVolume;
+            return dayDifference;
+        }
+
+        #endregion
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid DayDifferenceId
+        {
+            get
+            {
+                return _DayDifferenceId;
+            }
+            set
+            {
+                if (_DayDifferenceId != value)
+                {
+                    OnDayDifferenceIdChanging(value);
+                    ReportPropertyChanging("DayDifferenceId");
+                    _DayDifferenceId = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("DayDifferenceId");
+                    OnDayDifferenceIdChanged();
+                }
+            }
+        }
+        private global::System.Guid _DayDifferenceId;
+        partial void OnDayDifferenceIdChanging(global::System.Guid value);
+        partial void OnDayDifferenceIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String SymbolName
+        {
+            get
+            {
+                return _SymbolName;
+            }
+            set
+            {
+                if (_SymbolName != value)
+                {
+                    OnSymbolNameChanging(value);
+                    ReportPropertyChanging("SymbolName");
+                    _SymbolName = StructuralObject.SetValidValue(value, false);
+                    ReportPropertyChanged("SymbolName");
+                    OnSymbolNameChanged();
+                }
+            }
+        }
+        private global::System.String _SymbolName;
+        partial void OnSymbolNameChanging(global::System.String value);
+        partial void OnSymbolNameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime DayDifferenceDate
+        {
+            get
+            {
+                return _DayDifferenceDate;
+            }
+            set
+            {
+                OnDayDifferenceDateChanging(value);
+                ReportPropertyChanging("DayDifferenceDate");
+                _DayDifferenceDate = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DayDifferenceDate");
+                OnDayDifferenceDateChanged();
+            }
+        }
+        private global::System.DateTime _DayDifferenceDate;
+        partial void OnDayDifferenceDateChanging(global::System.DateTime value);
+        partial void OnDayDifferenceDateChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Double DayDifferenceOpen
+        {
+            get
+            {
+                return _DayDifferenceOpen;
+            }
+            set
+            {
+                OnDayDifferenceOpenChanging(value);
+                ReportPropertyChanging("DayDifferenceOpen");
+                _DayDifferenceOpen = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DayDifferenceOpen");
+                OnDayDifferenceOpenChanged();
+            }
+        }
+        private global::System.Double _DayDifferenceOpen;
+        partial void OnDayDifferenceOpenChanging(global::System.Double value);
+        partial void OnDayDifferenceOpenChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Double DayDifferenceHigh
+        {
+            get
+            {
+                return _DayDifferenceHigh;
+            }
+            set
+            {
+                OnDayDifferenceHighChanging(value);
+                ReportPropertyChanging("DayDifferenceHigh");
+                _DayDifferenceHigh = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DayDifferenceHigh");
+                OnDayDifferenceHighChanged();
+            }
+        }
+        private global::System.Double _DayDifferenceHigh;
+        partial void OnDayDifferenceHighChanging(global::System.Double value);
+        partial void OnDayDifferenceHighChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Double DayDifferenceLow
+        {
+            get
+            {
+                return _DayDifferenceLow;
+            }
+            set
+            {
+                OnDayDifferenceLowChanging(value);
+                ReportPropertyChanging("DayDifferenceLow");
+                _DayDifferenceLow = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DayDifferenceLow");
+                OnDayDifferenceLowChanged();
+            }
+        }
+        private global::System.Double _DayDifferenceLow;
+        partial void OnDayDifferenceLowChanging(global::System.Double value);
+        partial void OnDayDifferenceLowChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Double DayDifferenceClose
+        {
+            get
+            {
+                return _DayDifferenceClose;
+            }
+            set
+            {
+                OnDayDifferenceCloseChanging(value);
+                ReportPropertyChanging("DayDifferenceClose");
+                _DayDifferenceClose = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DayDifferenceClose");
+                OnDayDifferenceCloseChanged();
+            }
+        }
+        private global::System.Double _DayDifferenceClose;
+        partial void OnDayDifferenceCloseChanging(global::System.Double value);
+        partial void OnDayDifferenceCloseChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Double DayDifferenceAdjustedClose
+        {
+            get
+            {
+                return _DayDifferenceAdjustedClose;
+            }
+            set
+            {
+                OnDayDifferenceAdjustedCloseChanging(value);
+                ReportPropertyChanging("DayDifferenceAdjustedClose");
+                _DayDifferenceAdjustedClose = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DayDifferenceAdjustedClose");
+                OnDayDifferenceAdjustedCloseChanged();
+            }
+        }
+        private global::System.Double _DayDifferenceAdjustedClose;
+        partial void OnDayDifferenceAdjustedCloseChanging(global::System.Double value);
+        partial void OnDayDifferenceAdjustedCloseChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Double DayDifferenceVolume
+        {
+            get
+            {
+                return _DayDifferenceVolume;
+            }
+            set
+            {
+                OnDayDifferenceVolumeChanging(value);
+                ReportPropertyChanging("DayDifferenceVolume");
+                _DayDifferenceVolume = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DayDifferenceVolume");
+                OnDayDifferenceVolumeChanged();
+            }
+        }
+        private global::System.Double _DayDifferenceVolume;
+        partial void OnDayDifferenceVolumeChanging(global::System.Double value);
+        partial void OnDayDifferenceVolumeChanged();
+
+        #endregion
+    
+        #region Navigation Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("ReportWatchModel", "FK_DayDifference_Symbol", "Symbol")]
+        public Symbol SymbolSet
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Symbol>("ReportWatchModel.FK_DayDifference_Symbol", "Symbol").Value;
+            }
+            set
+            {
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Symbol>("ReportWatchModel.FK_DayDifference_Symbol", "Symbol").Value = value;
+            }
+        }
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [BrowsableAttribute(false)]
+        [DataMemberAttribute()]
+        public EntityReference<Symbol> SymbolSetReference
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Symbol>("ReportWatchModel.FK_DayDifference_Symbol", "Symbol");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Symbol>("ReportWatchModel.FK_DayDifference_Symbol", "Symbol", value);
+                }
+            }
+        }
+
+        #endregion
+    }
     
     /// <summary>
     /// No Metadata Documentation available.
@@ -1118,6 +1820,50 @@ namespace ReportWatch.Database
                 if ((value != null))
                 {
                     ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Report>("ReportWatchModel.FK_Report_Symbol", "ReportSet", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("ReportWatchModel", "FK_DayChange_Symbol", "DayChangeSet")]
+        public EntityCollection<DayChange> DayChangeSet
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<DayChange>("ReportWatchModel.FK_DayChange_Symbol", "DayChangeSet");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<DayChange>("ReportWatchModel.FK_DayChange_Symbol", "DayChangeSet", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("ReportWatchModel", "FK_DayDifference_Symbol", "DayDifferenceSet")]
+        public EntityCollection<DayDifference> DayDifferenceSet
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<DayDifference>("ReportWatchModel.FK_DayDifference_Symbol", "DayDifferenceSet");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<DayDifference>("ReportWatchModel.FK_DayDifference_Symbol", "DayDifferenceSet", value);
                 }
             }
         }

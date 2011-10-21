@@ -299,7 +299,7 @@ namespace ReportWatch.Silverlight
             get
             {
                 return (from s in this._SymbolCollection
-                        orderby s.CompanyName ascending
+                        orderby s.SymbolName ascending
                         select s);
             }
         }

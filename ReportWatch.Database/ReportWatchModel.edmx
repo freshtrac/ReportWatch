@@ -6,6 +6,8 @@
     <edmx:StorageModels>
     <Schema Namespace="ReportWatchModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
         <EntityContainer Name="ReportWatchModelStoreContainer">
+          <EntitySet Name="DayChangeSet" EntityType="ReportWatchModel.Store.DayChangeSet" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="DayDifferenceSet" EntityType="ReportWatchModel.Store.DayDifferenceSet" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="DayPriceSet" EntityType="ReportWatchModel.Store.DayPriceSet" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="ExceptionLogSet" EntityType="ReportWatchModel.Store.ExceptionLogSet" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="ReportSet" EntityType="ReportWatchModel.Store.ReportSet" store:Type="Tables" Schema="dbo" />
@@ -14,11 +16,49 @@
             <End Role="SymbolSet" EntitySet="SymbolSet" />
             <End Role="DayPriceSet" EntitySet="DayPriceSet" />
           </AssociationSet>
+          <AssociationSet Name="FK_DayChange_Symbol" Association="ReportWatchModel.Store.FK_DayChange_Symbol">
+            <End Role="SymbolSet" EntitySet="SymbolSet" />
+            <End Role="DayChangeSet" EntitySet="DayChangeSet" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DayDifference_Symbol" Association="ReportWatchModel.Store.FK_DayDifference_Symbol">
+            <End Role="SymbolSet" EntitySet="SymbolSet" />
+            <End Role="DayDifferenceSet" EntitySet="DayDifferenceSet" />
+          </AssociationSet>
           <AssociationSet Name="FK_Report_Symbol" Association="ReportWatchModel.Store.FK_Report_Symbol">
             <End Role="SymbolSet" EntitySet="SymbolSet" />
             <End Role="ReportSet" EntitySet="ReportSet" />
           </AssociationSet>
         </EntityContainer>
+        <EntityType Name="DayChangeSet">
+          <Key>
+            <PropertyRef Name="DayChangeId" />
+            <PropertyRef Name="SymbolName" />
+          </Key>
+          <Property Name="DayChangeId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="SymbolName" Type="nvarchar" Nullable="false" MaxLength="10" />
+          <Property Name="DayChangeDate" Type="datetime2" Nullable="false" />
+          <Property Name="DayChangeOpen" Type="float" Nullable="false" />
+          <Property Name="DayChangeHigh" Type="float" Nullable="false" />
+          <Property Name="DayChangeLow" Type="float" Nullable="false" />
+          <Property Name="DayChangeClose" Type="float" Nullable="false" />
+          <Property Name="DayChangeAdjustedClose" Type="float" Nullable="false" />
+          <Property Name="DayChangeVolume" Type="float" Nullable="false" />
+        </EntityType>
+        <EntityType Name="DayDifferenceSet">
+          <Key>
+            <PropertyRef Name="DayDifferenceId" />
+            <PropertyRef Name="SymbolName" />
+          </Key>
+          <Property Name="DayDifferenceId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="SymbolName" Type="nvarchar" Nullable="false" MaxLength="10" />
+          <Property Name="DayDifferenceDate" Type="datetime2" Nullable="false" />
+          <Property Name="DayDifferenceOpen" Type="float" Nullable="false" />
+          <Property Name="DayDifferenceHigh" Type="float" Nullable="false" />
+          <Property Name="DayDifferenceLow" Type="float" Nullable="false" />
+          <Property Name="DayDifferenceClose" Type="float" Nullable="false" />
+          <Property Name="DayDifferenceAdjustedClose" Type="float" Nullable="false" />
+          <Property Name="DayDifferenceVolume" Type="float" Nullable="false" />
+        </EntityType>
         <EntityType Name="DayPriceSet">
           <Key>
             <PropertyRef Name="DayPriceId" />
@@ -79,6 +119,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_DayChange_Symbol">
+          <End Role="SymbolSet" Type="ReportWatchModel.Store.SymbolSet" Multiplicity="1" />
+          <End Role="DayChangeSet" Type="ReportWatchModel.Store.DayChangeSet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SymbolSet">
+              <PropertyRef Name="SymbolName" />
+            </Principal>
+            <Dependent Role="DayChangeSet">
+              <PropertyRef Name="SymbolName" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DayDifference_Symbol">
+          <End Role="SymbolSet" Type="ReportWatchModel.Store.SymbolSet" Multiplicity="1" />
+          <End Role="DayDifferenceSet" Type="ReportWatchModel.Store.DayDifferenceSet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SymbolSet">
+              <PropertyRef Name="SymbolName" />
+            </Principal>
+            <Dependent Role="DayDifferenceSet">
+              <PropertyRef Name="SymbolName" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Report_Symbol">
           <End Role="SymbolSet" Type="ReportWatchModel.Store.SymbolSet" Multiplicity="1" />
           <End Role="ReportSet" Type="ReportWatchModel.Store.ReportSet" Multiplicity="*" />
@@ -91,6 +155,12 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="CalculateDayChange" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="symbolName" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="CalculateDayDifference" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="symbolName" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="SetDayPriceHigh" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="DateReport" Type="datetime" Mode="In" />
         </Function>
@@ -112,7 +182,23 @@
             <End Role="ReportSet" EntitySet="ReportSet" />
           </AssociationSet>
           <FunctionImport Name="SetDayPriceHigh">
-            <Parameter Name="DateReport" Mode="In" Type="DateTime" />
+          <Parameter Name="DateReport" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <EntitySet Name="DayChangeSet" EntityType="ReportWatchModel.DayChange" />
+          <EntitySet Name="DayDifferenceSet" EntityType="ReportWatchModel.DayDifference" />
+          <AssociationSet Name="FK_DayChange_Symbol" Association="ReportWatchModel.FK_DayChange_Symbol">
+            <End Role="Symbol" EntitySet="SymbolSet" />
+            <End Role="DayChangeSet" EntitySet="DayChangeSet" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DayDifference_Symbol" Association="ReportWatchModel.FK_DayDifference_Symbol">
+            <End Role="Symbol" EntitySet="SymbolSet" />
+            <End Role="DayDifferenceSet" EntitySet="DayDifferenceSet" />
+          </AssociationSet>
+          <FunctionImport Name="CalculateDayChange">
+            <Parameter Name="symbolName" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="CalculateDayDifference">
+            <Parameter Name="symbolName" Mode="In" Type="String" />
           </FunctionImport>
         </EntityContainer>
         <EntityType Name="DayPrice">
@@ -166,6 +252,8 @@
           <Property Name="ReportDate" Type="DateTime" />
           <NavigationProperty Name="DayPriceSet" Relationship="ReportWatchModel.FK_Day_Symbol" FromRole="SymbolSet" ToRole="DayPriceSet" />
           <NavigationProperty Name="ReportSet" Relationship="ReportWatchModel.FK_Report_Symbol" FromRole="SymbolSet" ToRole="ReportSet" />
+          <NavigationProperty Name="DayChangeSet" Relationship="ReportWatchModel.FK_DayChange_Symbol" FromRole="Symbol" ToRole="DayChangeSet" />
+          <NavigationProperty Name="DayDifferenceSet" Relationship="ReportWatchModel.FK_DayDifference_Symbol" FromRole="Symbol" ToRole="DayDifferenceSet" />
         </EntityType>
         <Association Name="FK_Day_Symbol">
           <End Role="SymbolSet" Type="ReportWatchModel.Symbol" Multiplicity="1" />
@@ -187,6 +275,62 @@
               <PropertyRef Name="SymbolName" />
             </Principal>
             <Dependent Role="ReportSet">
+              <PropertyRef Name="SymbolName" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="DayChange">
+          <Key>
+            <PropertyRef Name="DayChangeId" />
+            <PropertyRef Name="SymbolName" />
+          </Key>
+          <Property Type="Guid" Name="DayChangeId" Nullable="false" />
+          <Property Type="String" Name="SymbolName" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Type="DateTime" Name="DayChangeDate" Nullable="false" />
+          <Property Type="Double" Name="DayChangeOpen" Nullable="false" />
+          <Property Type="Double" Name="DayChangeHigh" Nullable="false" />
+          <Property Type="Double" Name="DayChangeLow" Nullable="false" />
+          <Property Type="Double" Name="DayChangeClose" Nullable="false" />
+          <Property Type="Double" Name="DayChangeAdjustedClose" Nullable="false" />
+          <Property Type="Double" Name="DayChangeVolume" Nullable="false" />
+          <NavigationProperty Name="SymbolSet" Relationship="ReportWatchModel.FK_DayChange_Symbol" FromRole="DayChangeSet" ToRole="Symbol" />
+        </EntityType>
+        <EntityType Name="DayDifference">
+          <Key>
+            <PropertyRef Name="DayDifferenceId" />
+            <PropertyRef Name="SymbolName" />
+          </Key>
+          <Property Type="Guid" Name="DayDifferenceId" Nullable="false" />
+          <Property Type="String" Name="SymbolName" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Type="DateTime" Name="DayDifferenceDate" Nullable="false" />
+          <Property Type="Double" Name="DayDifferenceOpen" Nullable="false" />
+          <Property Type="Double" Name="DayDifferenceHigh" Nullable="false" />
+          <Property Type="Double" Name="DayDifferenceLow" Nullable="false" />
+          <Property Type="Double" Name="DayDifferenceClose" Nullable="false" />
+          <Property Type="Double" Name="DayDifferenceAdjustedClose" Nullable="false" />
+          <Property Type="Double" Name="DayDifferenceVolume" Nullable="false" />
+          <NavigationProperty Name="SymbolSet" Relationship="ReportWatchModel.FK_DayDifference_Symbol" FromRole="DayDifferenceSet" ToRole="Symbol" />
+        </EntityType>
+        <Association Name="FK_DayChange_Symbol">
+          <End Type="ReportWatchModel.Symbol" Role="Symbol" Multiplicity="1" />
+          <End Type="ReportWatchModel.DayChange" Role="DayChangeSet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Symbol">
+              <PropertyRef Name="SymbolName" />
+            </Principal>
+            <Dependent Role="DayChangeSet">
+              <PropertyRef Name="SymbolName" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DayDifference_Symbol">
+          <End Type="ReportWatchModel.Symbol" Role="Symbol" Multiplicity="1" />
+          <End Type="ReportWatchModel.DayDifference" Role="DayDifferenceSet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Symbol">
+              <PropertyRef Name="SymbolName" />
+            </Principal>
+            <Dependent Role="DayDifferenceSet">
               <PropertyRef Name="SymbolName" />
             </Dependent>
           </ReferentialConstraint>
@@ -232,6 +376,38 @@
             <ScalarProperty Name="ReportDate" ColumnName="ReportDate" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
           <FunctionImportMapping FunctionImportName="SetDayPriceHigh" FunctionName="ReportWatchModel.Store.SetDayPriceHigh" />
+          <EntitySetMapping Name="DayChangeSet">
+            <EntityTypeMapping TypeName="ReportWatchModel.DayChange">
+              <MappingFragment StoreEntitySet="DayChangeSet">
+                <ScalarProperty Name="DayChangeVolume" ColumnName="DayChangeVolume" />
+                <ScalarProperty Name="DayChangeAdjustedClose" ColumnName="DayChangeAdjustedClose" />
+                <ScalarProperty Name="DayChangeClose" ColumnName="DayChangeClose" />
+                <ScalarProperty Name="DayChangeLow" ColumnName="DayChangeLow" />
+                <ScalarProperty Name="DayChangeHigh" ColumnName="DayChangeHigh" />
+                <ScalarProperty Name="DayChangeOpen" ColumnName="DayChangeOpen" />
+                <ScalarProperty Name="DayChangeDate" ColumnName="DayChangeDate" />
+                <ScalarProperty Name="SymbolName" ColumnName="SymbolName" />
+                <ScalarProperty Name="DayChangeId" ColumnName="DayChangeId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DayDifferenceSet">
+            <EntityTypeMapping TypeName="ReportWatchModel.DayDifference">
+              <MappingFragment StoreEntitySet="DayDifferenceSet">
+                <ScalarProperty Name="DayDifferenceVolume" ColumnName="DayDifferenceVolume" />
+                <ScalarProperty Name="DayDifferenceAdjustedClose" ColumnName="DayDifferenceAdjustedClose" />
+                <ScalarProperty Name="DayDifferenceClose" ColumnName="DayDifferenceClose" />
+                <ScalarProperty Name="DayDifferenceLow" ColumnName="DayDifferenceLow" />
+                <ScalarProperty Name="DayDifferenceHigh" ColumnName="DayDifferenceHigh" />
+                <ScalarProperty Name="DayDifferenceOpen" ColumnName="DayDifferenceOpen" />
+                <ScalarProperty Name="DayDifferenceDate" ColumnName="DayDifferenceDate" />
+                <ScalarProperty Name="SymbolName" ColumnName="SymbolName" />
+                <ScalarProperty Name="DayDifferenceId" ColumnName="DayDifferenceId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="CalculateDayChange" FunctionName="ReportWatchModel.Store.CalculateDayChange" />
+          <FunctionImportMapping FunctionImportName="CalculateDayDifference" FunctionName="ReportWatchModel.Store.CalculateDayDifference" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -262,8 +438,22 @@
           <ConnectorPoint PointX="3" PointY="3.7208968098958328" />
         </AssociationConnector>
         <AssociationConnector Association="ReportWatchModel.FK_Report_Symbol" ManuallyRouted="false">
-          <ConnectorPoint PointX="2.25" PointY="5.2112939453125" />
-          <ConnectorPoint PointX="3" PointY="5.2112939453125" />
+          <ConnectorPoint PointX="2.25" PointY="5.4035953776041659" />
+          <ConnectorPoint PointX="3" PointY="5.4035953776041659" />
+        </AssociationConnector>
+        <EntityTypeShape EntityType="ReportWatchModel.DayChange" Width="1.5" PointX="3" PointY="9.375" Height="2.9417936197916674" />
+        <EntityTypeShape EntityType="ReportWatchModel.DayDifference" Width="1.5" PointX="3" PointY="13" Height="2.9417936197916674" />
+        <AssociationConnector Association="ReportWatchModel.FK_DayChange_Symbol" >
+          <ConnectorPoint PointX="1.5" PointY="5.9321907552083326" />
+          <ConnectorPoint PointX="1.5" PointY="10.845896809895834" />
+          <ConnectorPoint PointX="1.8229191666666667" PointY="10.845896809895834" />
+          <ConnectorPoint PointX="1.9895858333333332" PointY="10.845896809895834" />
+          <ConnectorPoint PointX="3" PointY="10.845896809895834" />
+        </AssociationConnector>
+        <AssociationConnector Association="ReportWatchModel.FK_DayDifference_Symbol" >
+          <ConnectorPoint PointX="1.9062525" PointY="5.9321907552083326" />
+          <ConnectorPoint PointX="1.9062525" PointY="14.470896809895834" />
+          <ConnectorPoint PointX="3" PointY="14.470896809895834" />
         </AssociationConnector>
       </Diagram>
     </Diagrams>

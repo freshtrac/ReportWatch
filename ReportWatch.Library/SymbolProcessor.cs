@@ -104,7 +104,7 @@ namespace ReportWatch.Library
                     }
                 }
 
-                _entities.SaveChanges();
+                //_entities.SaveChanges();
 
                 // Check for process completion
                 if (_symbolNameListReport.Contains(reportDownloader.SymbolName)) _symbolNameListReport.Remove(reportDownloader.SymbolName);
@@ -149,6 +149,12 @@ namespace ReportWatch.Library
                 }
 
                 _entities.SaveChanges();
+
+                _entities.CalculateDayChange(dayPriceDownloader.SymbolName);
+
+                System.Threading.Thread.Sleep(3000);
+
+                _entities.CalculateDayDifference(dayPriceDownloader.SymbolName);
 
                 // Check for process completion
                 if(_symbolNameListDayPrice.Contains(dayPriceDownloader.SymbolName)) _symbolNameListDayPrice.Remove(dayPriceDownloader.SymbolName);

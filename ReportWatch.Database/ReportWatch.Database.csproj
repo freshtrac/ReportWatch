@@ -51,6 +51,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Report.shared.cs" />
     <Compile Include="ReportWatchDomainService.cs" />
+    <Compile Include="ReportWatchDomainService.metadata.cs" />
     <Compile Include="ReportWatchModel.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

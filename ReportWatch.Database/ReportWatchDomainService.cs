@@ -24,6 +24,24 @@ namespace ReportWatch.Database
         // TODO:
         // Consider constraining the results of your query method.  If you need additional input you can
         // add parameters to this method or create additional query methods with different names.
+        // To support paging you will need to add ordering to the 'DayChangeSet' query.
+        public IQueryable<DayChange> GetDayChangeSet()
+        {
+            return this.ObjectContext.DayChangeSet;
+        }
+
+        // TODO:
+        // Consider constraining the results of your query method.  If you need additional input you can
+        // add parameters to this method or create additional query methods with different names.
+        // To support paging you will need to add ordering to the 'DayDifferenceSet' query.
+        public IQueryable<DayDifference> GetDayDifferenceSet()
+        {
+            return this.ObjectContext.DayDifferenceSet;
+        }
+
+        // TODO:
+        // Consider constraining the results of your query method.  If you need additional input you can
+        // add parameters to this method or create additional query methods with different names.
         // To support paging you will need to add ordering to the 'DayPriceSet' query.
         public IQueryable<DayPrice> GetDayPriceSet()
         {
